@@ -4,9 +4,8 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
 
-// Meningkatkan batas ukuran request agar bisa menerima data gambar
+app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -20,8 +19,8 @@ app.post('/api/chatgpt', async (req, res) => {
     const { message, image } = req.body;
     let content = [];
 
-    if (message) content.push({ type: "text", text: message });
-    if (image) content.push({ type: "image_url", image_url: { url: image } });
+    if (message) content.push({ type: 'text', text: message });
+    if (image) content.push({ type: 'image_url', image_url: { url: image } });
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -77,5 +76,10 @@ app.post('/api/gemini', async (req, res) => {
     res.status(500).json({ error: err.message || 'Gagal menghubungi Gemini' });
   }
 });
+
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => console.log(`Server berjalan di port ${PORT}`));
+}
 
 module.exports = app;
