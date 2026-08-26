@@ -13,6 +13,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Daftar API Key Cadangan
 const API_KEYS = [
   process.env.GEMINI_API_KEY,
   process.env.GEMINI_API_KEY_2
@@ -34,6 +35,7 @@ app.post('/api/gemini', async (req, res) => {
 
     let lastError = null;
 
+    // Sistem Rotasi API Key Otomatis
     for (const key of API_KEYS) {
       try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
@@ -45,9 +47,8 @@ app.post('/api/gemini', async (req, res) => {
 
         const data = await response.json();
 
-        // Jika status HTTP gagal atau ada error dari Google, lewati ke Key berikutnya
         if (!response.ok || data.error) {
-          lastError = data.error?.message || `HTTP error! status: ${response.status}`;
+          lastError = data.error?.message || `HTTP status: ${response.status}`;
           continue; 
         }
 
@@ -57,10 +58,13 @@ app.post('/api/gemini', async (req, res) => {
       }
     }
 
-    throw new Error(lastError || 'Semua API Key cadangan sedang mencapai limit.');
+    throw new Error(lastError || 'Semua kuota API Key sedang mencapai limit.');
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server berjalan di port ${PORT}`));
 
 module.exports = app;
