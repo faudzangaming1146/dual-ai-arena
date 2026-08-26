@@ -5,19 +5,21 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors());
+
 // Meningkatkan batas ukuran request agar bisa menerima data gambar
 app.use(express.json({ limit: '50mb' }));
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Endpoint ChatGPT
 app.post('/api/chatgpt', async (req, res) => {
   try {
     const { message, image } = req.body;
     let content = [];
+
     if (message) content.push({ type: "text", text: message });
     if (image) content.push({ type: "image_url", image_url: { url: image } });
 
@@ -32,6 +34,7 @@ app.post('/api/chatgpt', async (req, res) => {
         messages: [{ role: 'user', content }]
       })
     });
+
     const data = await response.json();
     if (data.error) throw new Error(data.error.message);
     res.json({ reply: data.choices[0].message.content });
@@ -40,6 +43,7 @@ app.post('/api/chatgpt', async (req, res) => {
   }
 });
 
+// Endpoint Gemini
 app.post('/api/gemini', async (req, res) => {
   try {
     const { message, image } = req.body;
@@ -57,24 +61,21 @@ app.post('/api/gemini', async (req, res) => {
       });
     }
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
-   const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts }]
-    })
-  });
-  const data = await response.json();
-  if (data.error) throw new Error(data.error.message);
-  res.json({ reply: data.candidates[0].content.parts[0].text });
-} catch (err) {
-  res.status(500).json({ error: err.message });
-}
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts }]
+      })
+    });
 
-module.exports = app;
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message);
+    res.json({ reply: data.candidates[0].content.parts[0].text });
+  } catch (err) {
     res.status(500).json({ error: err.message || 'Gagal menghubungi Gemini' });
   }
 });
 
-app.listen(3000, () => console.log('Server berjalan di http://localhost:3000'));
+module.exports = app;
