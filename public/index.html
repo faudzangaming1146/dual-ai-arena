@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dual AI Arena</title>
+  <title>Gemini AI Arena</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
     body { background-color: #121926; color: #fff; padding: 20px; display: flex; flex-direction: column; height: 100vh; }
@@ -12,17 +12,14 @@
     .msg { padding: 12px; border-radius: 8px; max-width: 80%; line-height: 1.4; white-space: pre-wrap; }
     .msg img { max-width: 100%; border-radius: 6px; margin-top: 8px; }
     .user { background: #1e40af; align-self: flex-end; }
-    .ai-chatgpt { background: #14532d; align-self: flex-start; }
     .ai-gemini { background: #1e3a8a; align-self: flex-start; }
     .controls { display: flex; flex-direction: column; gap: 10px; padding-top: 10px; }
     textarea { width: 100%; height: 60px; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 6px; padding: 10px; resize: none; }
     .btn-group { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     button { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: white; }
     .btn-img { background: #0284c7; }
-    .btn-gpt { background: #16a34a; }
     .btn-game { background: #eab308; color: #000; }
     .btn-gemini { background: #2563eb; }
-    .btn-both { background: #9333ea; }
     .btn-clear { background: #dc2626; }
     #preview-container { display: none; align-items: center; gap: 10px; background: #1e293b; padding: 6px 12px; border-radius: 6px; font-size: 13px; }
     #preview-img { height: 40px; border-radius: 4px; }
@@ -36,7 +33,7 @@
 <body>
 
   <div class="header">
-    <h2>Dual AI Arena</h2>
+    <h2>Gemini AI Arena</h2>
     <button class="btn-clear" onclick="clearChat()">Hapus Chat</button>
   </div>
 
@@ -54,10 +51,8 @@
     <div class="btn-group">
       <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="handleImageSelect(event)">
       <button class="btn-img" onclick="document.getElementById('image-input').click()">📷 Unggah Gambar</button>
-      <button class="btn-gpt" onclick="sendPrompt('chatgpt')">Kirim ke ChatGPT</button>
+      <button class="btn-gemini" onclick="sendPrompt()">Kirim ke Gemini</button>
       <button class="btn-game" onclick="renderGame()">🎮 Render Game</button>
-      <button class="btn-gemini" onclick="sendPrompt('gemini')">Kirim ke Gemini</button>
-      <button class="btn-both" onclick="sendPrompt('both')">Kirim ke Kedua AI</button>
     </div>
   </div>
 
@@ -88,7 +83,7 @@
       document.getElementById('preview-container').style.display = 'none';
     }
 
-    async function sendPrompt(target) {
+    async function sendPrompt() {
       const input = document.getElementById('user-input');
       const text = input.value.trim();
       if (!text && !selectedBase64Image) return;
@@ -99,8 +94,7 @@
       input.value = '';
       removeImage();
 
-      if (target === 'chatgpt' || target === 'both') fetchAI('/api/chatgpt', text, currentImage, 'ai-chatgpt', 'CHATGPT');
-      if (target === 'gemini' || target === 'both') fetchAI('/api/gemini', text, currentImage, 'ai-gemini', 'GOOGLE GEMINI');
+      fetchAI('/api/gemini', text, currentImage, 'ai-gemini', 'GOOGLE GEMINI');
     }
 
     async function fetchAI(url, message, image, cssClass, label) {
@@ -148,7 +142,7 @@
 
     function renderGame() {
       if (!lastCode) {
-        alert("Belum ada kode game HTML dari AI.");
+        alert("Belum ada kode game HTML dari Gemini.");
         return;
       }
       const modal = document.getElementById('game-modal');
