@@ -13,36 +13,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Endpoint ChatGPT
-app.post('/api/chatgpt', async (req, res) => {
-  try {
-    const { message, image } = req.body;
-    let content = [];
-
-    if (message) content.push({ type: 'text', text: message });
-    if (image) content.push({ type: 'image_url', image_url: { url: image } });
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content }]
-      })
-    });
-
-    const data = await response.json();
-    if (data.error) throw new Error(data.error.message);
-    res.json({ reply: data.choices[0].message.content });
-  } catch (err) {
-    res.status(500).json({ error: err.message || 'Gagal menghubungi ChatGPT' });
-  }
-});
-
-// Endpoint Gemini
+// Endpoint Gemini (Teks & Gambar)
 app.post('/api/gemini', async (req, res) => {
   try {
     const { message, image } = req.body;
