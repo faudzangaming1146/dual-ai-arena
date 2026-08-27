@@ -1,14 +1,30 @@
-// Ganti URL di bawah dengan URL dari Realtime Database Firebase milikmu
+// Config Firebase Realtime Database
 const firebaseConfig = {
-  databaseURL: "https://dual-ai-arena-default-rtdb.asia-southeast1.firebasedatabase.app/" 
+  databaseURL: "https://dual-ai-arena-default-rtdb.asia-southeast1.firebasedatabase.app"
 };
 
-// Inisialisasi Database
+// Inisialisasi Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// ID Pengguna Acak untuk Identitas Chat
-const userId = "User_" + Math.floor(1000 + Math.random() * 9000);
+// Mengambil nama tersimpan dari browser atau membuat ID acak default
+let userId = localStorage.getItem('chatUsername') || "User_" + Math.floor(1000 + Math.random() * 9000);
+
+// Menampilkan nama di tombol saat halaman dimuat
+document.addEventListener('DOMContentLoaded', () => {
+  const nameBtn = document.getElementById('name-btn');
+  if (nameBtn) nameBtn.innerText = "👤 " + userId;
+});
+
+// Fungsi untuk mengganti nama dari tombol
+function changeName() {
+  const newName = prompt("Masukkan nama baru kamu:", userId);
+  if (newName && newName.trim() !== "") {
+    userId = newName.trim();
+    localStorage.setItem('chatUsername', userId);
+    document.getElementById('name-btn').innerText = "👤 " + userId;
+  }
+}
 
 // Menerima pesan baru secara langsung dari SELURUH pengguna aktif
 db.ref('global_chat').limitToLast(50).on('child_added', (snapshot) => {
@@ -16,7 +32,7 @@ db.ref('global_chat').limitToLast(50).on('child_added', (snapshot) => {
   appendChatMessage(data.sender, data.text);
 });
 
-// --- LOGIKA CHAT GLOBAL ---
+// LOGIKA CHAT GLOBAL
 function toggleChat() {
   const chatBox = document.getElementById('global-chat-box');
   chatBox.classList.toggle('hidden');
@@ -31,7 +47,6 @@ function sendChatMessage() {
   const text = input.value.trim();
   
   if (text !== '') {
-    // Memuat pesan ke database cloud agar terkirim ke semua perangkat
     db.ref('global_chat').push({
       sender: userId,
       text: text,
@@ -50,7 +65,7 @@ function appendChatMessage(sender, text) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// --- LOGIKA UTAMA GEMINI AI ---
+// LOGIKA UTAMA GEMINI AI
 async function sendAiPrompt() {
   const input = document.getElementById('prompt-input');
   const box = document.getElementById('ai-response-box');
