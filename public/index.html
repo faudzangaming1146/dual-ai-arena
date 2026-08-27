@@ -14,7 +14,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #0f172a, #1e293b);
+      background-color: #0d1322;
       color: #f8fafc;
       min-height: 100vh;
       display: flex;
@@ -23,19 +23,18 @@
 
     /* Navbar Header */
     header {
-      background-color: #1e293b;
-      padding: 15px 30px;
+      background-color: #172033;
+      padding: 12px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px solid #334155;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid #2a374f;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .brand i {
@@ -44,35 +43,39 @@
     }
 
     .brand h1 {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
-      color: #f8fafc;
-      letter-spacing: 0.5px;
+      color: #ffffff;
     }
 
     .nav-buttons {
       display: flex;
-      gap: 10px;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .account-label {
+      font-size: 13px;
+      color: #94a3b8;
+      font-weight: 600;
     }
 
     .btn {
-      background-color: #334155;
+      background-color: #243047;
       color: #f8fafc;
-      border: 1px solid #475569;
-      padding: 8px 16px;
+      border: 1px solid #3b4d6c;
+      padding: 7px 14px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
-      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       gap: 6px;
     }
 
     .btn:hover {
-      background-color: #475569;
-      border-color: #38bdf8;
+      background-color: #2e3d5a;
     }
 
     .btn-primary {
@@ -84,29 +87,73 @@
       background-color: #0369a1;
     }
 
+    /* Page Layout With Sidebar */
+    .page-wrapper {
+      display: flex;
+      flex: 1;
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+      width: 100px;
+      background-color: #121929;
+      border-right: 1px solid #2a374f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 25px;
+      gap: 30px;
+    }
+
+    .sidebar-btn {
+      background: none;
+      border: none;
+      color: #38bdf8;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      transition: transform 0.2s;
+    }
+
+    .sidebar-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .sidebar-btn i {
+      font-size: 38px;
+    }
+
+    .sidebar-btn span {
+      font-size: 11px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
     /* Main Container */
     main {
       flex: 1;
-      max-width: 1000px;
-      width: 100%;
-      margin: 20px auto;
-      padding: 0 20px;
+      padding: 30px;
       display: flex;
-      flex-direction: column;
-      gap: 20px;
+      justify-content: center;
+      align-items: flex-start;
     }
 
-    /* AI Box Section */
     .ai-card {
-      background-color: #1e293b;
-      border: 1px solid #334155;
+      background-color: #172033;
+      border: 1px solid #2a374f;
       border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 850px;
     }
 
     .ai-card h2 {
-      font-size: 18px;
+      font-size: 16px;
       margin-bottom: 15px;
       color: #38bdf8;
       display: flex;
@@ -122,73 +169,104 @@
 
     .prompt-container input {
       flex: 1;
-      background-color: #0f172a;
-      border: 1px solid #334155;
+      background-color: #0d1322;
+      border: 1px solid #2a374f;
       color: #fff;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border-radius: 8px;
-      font-size: 15px;
+      font-size: 14px;
       outline: none;
     }
 
-    .prompt-container input:focus {
-      border-color: #38bdf8;
-    }
-
     .ai-response {
-      background-color: #0f172a;
-      border: 1px solid #334155;
+      background-color: #0d1322;
+      border: 1px solid #2a374f;
       border-radius: 8px;
       padding: 16px;
-      min-height: 120px;
-      max-height: 350px;
-      overflow-y: auto;
-      color: #e2e8f0;
-      line-height: 1.6;
+      min-height: 140px;
+      color: #cbd5e1;
     }
 
-    /* Floating Chat Boxes */
+    /* Modal / Popups */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+    }
+
+    .modal-card {
+      background-color: #172033;
+      border: 1px solid #38bdf8;
+      border-radius: 12px;
+      padding: 20px;
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    }
+
+    .modal-card h3 {
+      font-size: 16px;
+      color: #38bdf8;
+    }
+
+    .modal-card input {
+      background-color: #0d1322;
+      border: 1px solid #2a374f;
+      color: white;
+      padding: 10px;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* Floating Windows */
     .chat-box {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      width: 350px;
-      height: 480px;
-      background-color: #1e293b;
-      border: 1px solid #334155;
+      width: 340px;
+      height: 450px;
+      background-color: #172033;
+      border: 1px solid #2a374f;
       border-radius: 12px;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
       z-index: 100;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
 
-    .chat-box.private {
-      right: 390px;
-      border-color: #a855f7;
-    }
+    .chat-box.private { right: 375px; border-color: #a855f7; }
+    .chat-box.direct { left: 120px; bottom: 20px; right: auto; border-color: #38bdf8; }
+    .chat-box.inbox { left: 120px; bottom: 20px; right: auto; width: 280px; }
 
     .chat-header {
-      background-color: #0f172a;
-      padding: 12px 16px;
+      background-color: #0d1322;
+      padding: 10px 14px;
       border-top-left-radius: 12px;
       border-top-right-radius: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #334155;
+      border-bottom: 1px solid #2a374f;
     }
 
     .chat-header h3 {
-      font-size: 15px;
+      font-size: 14px;
       color: #38bdf8;
       display: flex;
       align-items: center;
-      gap: 8px;
-    }
-
-    .chat-header.private-header h3 {
-      color: #c084fc;
+      gap: 6px;
     }
 
     .close-btn {
@@ -196,10 +274,9 @@
       border: none;
       color: #94a3b8;
       cursor: pointer;
-      font-size: 16px;
     }
 
-    .chat-messages {
+    .chat-messages, .inbox-list {
       flex: 1;
       padding: 12px;
       overflow-y: auto;
@@ -208,42 +285,53 @@
       gap: 8px;
     }
 
+    .inbox-item {
+      background-color: #243047;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .inbox-item:hover {
+      background-color: #0284c7;
+    }
+
     .user-msg {
-      background-color: #334155;
+      background-color: #243047;
       padding: 8px 12px;
       border-radius: 8px;
-      font-size: 14px;
-      line-height: 1.4;
+      font-size: 13px;
       word-break: break-word;
     }
 
-    .user-msg strong {
-      color: #38bdf8;
-    }
+    .user-msg strong { color: #38bdf8; }
 
     .chat-input-area {
-      padding: 12px;
-      background-color: #0f172a;
+      padding: 10px;
+      background-color: #0d1322;
       border-bottom-left-radius: 12px;
       border-bottom-right-radius: 12px;
       display: flex;
-      gap: 8px;
+      gap: 6px;
     }
 
     .chat-input-area input {
       flex: 1;
-      background-color: #1e293b;
-      border: 1px solid #334155;
+      background-color: #172033;
+      border: 1px solid #2a374f;
       color: #fff;
-      padding: 8px 12px;
+      padding: 8px;
       border-radius: 6px;
-      font-size: 14px;
+      font-size: 13px;
       outline: none;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
   </style>
 
   <!-- Firebase CDN -->
@@ -252,32 +340,84 @@
 </head>
 <body>
 
-  <!-- Header Section -->
+  <!-- Top Navigation Header -->
   <header>
     <div class="brand">
       <i class="fa-solid fa-comments"></i>
       <h1>Information Chat & AI</h1>
     </div>
     <div class="nav-buttons">
+      <span class="account-label">NAMA AKUN:</span>
       <button class="btn" id="name-btn" onclick="changeName()">👤 Loading...</button>
       <button class="btn btn-primary" onclick="toggleChat()"><i class="fa-solid fa-globe"></i> Global Chat</button>
       <button class="btn" style="border-color: #a855f7;" onclick="togglePrivateChat()"><i class="fa-solid fa-lock"></i> Chat Pribadi</button>
     </div>
   </header>
 
-  <!-- Main Content -->
-  <main>
-    <div class="ai-card">
-      <h2><i class="fa-solid fa-robot"></i> Asisten Information Chat & AI</h2>
-      <div class="prompt-container">
-        <input type="text" id="prompt-input" placeholder="Tanyakan sesuatu pada AI..." onkeydown="if(event.key==='Enter') sendAiPrompt()">
-        <button class="btn btn-primary" onclick="sendAiPrompt()"><i class="fa-solid fa-paper-plane"></i> Kirim</button>
+  <div class="page-wrapper">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <button class="sidebar-btn" onclick="toggleInbox()">
+        <i class="fa-solid fa-comments"></i>
+        <span>PESAN</span>
+      </button>
+
+      <button class="sidebar-btn" onclick="openSearchAccountModal()">
+        <i class="fa-solid fa-comment-dots"></i>
+        <span>KIRIM PESAN</span>
+      </button>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main>
+      <div class="ai-card">
+        <h2><i class="fa-solid fa-robot"></i> Asisten Information Chat & AI</h2>
+        <div class="prompt-container">
+          <input type="text" id="prompt-input" placeholder="Tanyakan sesuatu pada AI..." onkeydown="if(event.key==='Enter') sendAiPrompt()">
+          <button class="btn btn-primary" onclick="sendAiPrompt()"><i class="fa-solid fa-paper-plane"></i> Kirim</button>
+        </div>
+        <div class="ai-response" id="ai-response-box">
+          <p style="color: #64748b;"><em>Hasil jawaban AI akan ditampilkan di sini...</em></p>
+        </div>
       </div>
-      <div class="ai-response" id="ai-response-box">
-        <p style="color: #64748b;"><em>Hasil jawaban AI akan ditampilkan di sini...</em></p>
+    </main>
+  </div>
+
+  <!-- Modal Cari Akun untuk Kirim Pesan -->
+  <div class="modal-overlay hidden" id="search-modal">
+    <div class="modal-card">
+      <h3><i class="fa-solid fa-user-check"></i> Cari Akun Tujuan</h3>
+      <input type="text" id="target-username-input" placeholder="Masukkan nama akun..." onkeydown="if(event.key==='Enter') verifyAndStartChat()">
+      <div class="modal-actions">
+        <button class="btn" onclick="closeSearchAccountModal()">Batal</button>
+        <button class="btn btn-primary" onclick="verifyAndStartChat()">Cari & Chat</button>
       </div>
     </div>
-  </main>
+  </div>
+
+  <!-- Box Daftar Pesan / Inbox -->
+  <div class="chat-box inbox hidden" id="inbox-box">
+    <div class="chat-header">
+      <h3><i class="fa-solid fa-inbox"></i> Daftar Pesan</h3>
+      <button class="close-btn" onclick="toggleInbox()">✕</button>
+    </div>
+    <div class="inbox-list" id="inbox-list">
+      <p style="color: #64748b; font-size: 12px; text-align: center;">Belum ada riwayat pesan.</p>
+    </div>
+  </div>
+
+  <!-- Box Chat Langsung / Direct Message -->
+  <div class="chat-box direct hidden" id="direct-chat-box">
+    <div class="chat-header">
+      <h3 id="direct-chat-title"><i class="fa-solid fa-user"></i> Chat</h3>
+      <button class="close-btn" onclick="closeDirectChat()">✕</button>
+    </div>
+    <div class="chat-messages" id="direct-messages"></div>
+    <div class="chat-input-area">
+      <input type="text" id="direct-chat-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendDirectMessage()">
+      <button class="btn btn-primary" onclick="sendDirectMessage()">Kirim</button>
+    </div>
+  </div>
 
   <!-- Global Chat Box -->
   <div class="chat-box hidden" id="global-chat-box">
@@ -287,52 +427,50 @@
     </div>
     <div class="chat-messages" id="chat-messages"></div>
     <div class="chat-input-area">
-      <input type="text" id="chat-input" placeholder="Ketik pesan global..." onkeydown="handleChatEnter(event)">
+      <input type="text" id="chat-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendChatMessage()">
       <button class="btn btn-primary" onclick="sendChatMessage()">Kirim</button>
     </div>
   </div>
 
   <!-- Private Chat Box -->
   <div class="chat-box private hidden" id="private-chat-box">
-    <div class="chat-header private-header">
-      <h3><i class="fa-solid fa-user-lock"></i> Chat Pribadi</h3>
+    <div class="chat-header" style="background: #2e1065;">
+      <h3 style="color: #c084fc;"><i class="fa-solid fa-user-lock"></i> Chat Pribadi</h3>
       <button class="close-btn" onclick="togglePrivateChat()">✕</button>
     </div>
     <div class="chat-messages" id="private-chat-messages"></div>
     <div class="chat-input-area">
-      <input type="text" id="private-chat-input" placeholder="Ketik pesan pribadi..." onkeydown="handlePrivateChatEnter(event)">
+      <input type="text" id="private-chat-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendPrivateChatMessage()">
       <button class="btn" style="background:#a855f7; border:none;" onclick="sendPrivateChatMessage()">Kirim</button>
     </div>
   </div>
 
   <script>
-    // Config Firebase Realtime Database
     const firebaseConfig = {
       databaseURL: "https://dual-ai-arena-default-rtdb.asia-southeast1.firebasedatabase.app"
     };
 
-    // Inisialisasi Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // ID Rahasia Perangkat untuk penguncian nama unik
     let deviceSecretKey = localStorage.getItem('deviceSecretKey');
     if (!deviceSecretKey) {
       deviceSecretKey = 'dev_' + Math.random().toString(36).substring(2, 11);
       localStorage.setItem('deviceSecretKey', deviceSecretKey);
     }
 
-    // Identitas Pengguna
     let userId = localStorage.getItem('chatUsername') || "User_" + Math.floor(1000 + Math.random() * 9000);
-    let isPrivateUnlocked = false;
+    let activeDirectTarget = null;
+    let directListenerRef = null;
 
     document.addEventListener('DOMContentLoaded', () => {
       updateNameButtons();
+      listenToInbox();
     });
 
     function updateNameButtons() {
       const nameBtn = document.getElementById('name-btn');
-      if (nameBtn) nameBtn.innerText = "👤 " + userId;
+      if (nameBtn) nameBtn.innerText = userId;
     }
 
     // --- KUNCI NAMA UNIK ---
@@ -362,94 +500,192 @@
         userId = newName;
         localStorage.setItem('chatUsername', userId);
         updateNameButtons();
+        listenToInbox();
         alert(`✅ Nama "${userId}" berhasil dikunci untuk perangkat ini!`);
-
       } catch (err) {
         alert("Gagal memeriksa ketersediaan nama: " + err.message);
       }
     }
 
-    // --- CHAT GLOBAL ---
+    // --- FITUR SISI KIRI: KIRIM PESAN & CARI AKUN ---
+    function openSearchAccountModal() {
+      document.getElementById('search-modal').classList.remove('hidden');
+      document.getElementById('target-username-input').focus();
+    }
+
+    function closeSearchAccountModal() {
+      document.getElementById('search-modal').classList.add('hidden');
+      document.getElementById('target-username-input').value = '';
+    }
+
+    async function verifyAndStartChat() {
+      const targetInput = document.getElementById('target-username-input').value.trim();
+      if (!targetInput) return;
+
+      if (targetInput.toLowerCase() === userId.toLowerCase()) {
+        alert("Kamu tidak bisa mengirim pesan ke akun milikmu sendiri!");
+        return;
+      }
+
+      const targetSanitized = targetInput.toLowerCase().replace(/[.#$/[\]]/g, "_");
+
+      try {
+        const snapshot = await db.ref('claimed_names/' + targetSanitized).once('value');
+        if (snapshot.exists()) {
+          closeSearchAccountModal();
+          startDirectChat(targetInput);
+        } else {
+          alert(`⚠️ Akun dengan nama "${targetInput}" tidak ditemukan dalam sistem!`);
+        }
+      } catch (err) {
+        alert("Eror saat mencari akun: " + err.message);
+      }
+    }
+
+    // --- DIRECT CHAT (PESAN LANGSUNG) ---
+    function getRoomKey(userA, userB) {
+      const sorted = [userA.toLowerCase(), userB.toLowerCase()].sort();
+      return sorted[0].replace(/[.#$/[\]]/g, "_") + "_ROOM_" + sorted[1].replace(/[.#$/[\]]/g, "_");
+    }
+
+    function startDirectChat(targetUser) {
+      activeDirectTarget = targetUser;
+      document.getElementById('direct-chat-title').innerHTML = `<i class="fa-solid fa-user"></i> ${targetUser}`;
+      document.getElementById('direct-messages').innerHTML = '';
+      document.getElementById('direct-chat-box').classList.remove('hidden');
+
+      if (directListenerRef) directListenerRef.off();
+
+      const roomKey = getRoomKey(userId, targetUser);
+      directListenerRef = db.ref('direct_chats/' + roomKey).limitToLast(50);
+      
+      directListenerRef.on('child_added', (snapshot) => {
+        const data = snapshot.val();
+        appendChatMessage('direct-messages', data.sender, data.text);
+      });
+    }
+
+    function closeDirectChat() {
+      document.getElementById('direct-chat-box').classList.add('hidden');
+      if (directListenerRef) directListenerRef.off();
+      activeDirectTarget = null;
+    }
+
+    function sendDirectMessage() {
+      const input = document.getElementById('direct-chat-input');
+      const text = input.value.trim();
+      if (!text || !activeDirectTarget) return;
+
+      const roomKey = getRoomKey(userId, activeDirectTarget);
+      
+      // Kirim ke room percakapan
+      db.ref('direct_chats/' + roomKey).push({
+        sender: userId,
+        text: text,
+        timestamp: Date.now()
+      });
+
+      // Catat daftar inbox untuk kedua pengguna
+      const mySanitized = userId.toLowerCase().replace(/[.#$/[\]]/g, "_");
+      const targetSanitized = activeDirectTarget.toLowerCase().replace(/[.#$/[\]]/g, "_");
+
+      db.ref(`user_inboxes/${mySanitized}/${targetSanitized}`).set({ targetName: activeDirectTarget });
+      db.ref(`user_inboxes/${targetSanitized}/${mySanitized}`).set({ targetName: userId });
+
+      input.value = '';
+    }
+
+    // --- FITUR SISI KIRI: DAFTAR PESAN (INBOX) ---
+    function toggleInbox() {
+      document.getElementById('inbox-box').classList.toggle('hidden');
+    }
+
+    function listenToInbox() {
+      const mySanitized = userId.toLowerCase().replace(/[.#$/[\]]/g, "_");
+      db.ref(`user_inboxes/${mySanitized}`).on('value', (snapshot) => {
+        const inboxList = document.getElementById('inbox-list');
+        inboxList.innerHTML = '';
+
+        if (!snapshot.exists()) {
+          inboxList.innerHTML = '<p style="color: #64748b; font-size: 12px; text-align: center;">Belum ada riwayat pesan.</p>';
+          return;
+        }
+
+        snapshot.forEach((child) => {
+          const item = child.val();
+          const div = document.createElement('div');
+          div.className = 'inbox-item';
+          div.innerHTML = `<i class="fa-solid fa-circle-user" style="color:#38bdf8;"></i> <strong>${item.targetName}</strong>`;
+          div.onclick = () => {
+            toggleInbox();
+            startDirectChat(item.targetName);
+          };
+          inboxList.appendChild(div);
+        });
+      });
+    }
+
+    // --- GLOBAL & PRIVATE CHAT ---
     db.ref('global_chat').limitToLast(50).on('child_added', (snapshot) => {
       const data = snapshot.val();
       appendChatMessage('chat-messages', data.sender, data.text);
     });
 
     function toggleChat() {
-      const chatBox = document.getElementById('global-chat-box');
-      document.getElementById('private-chat-box').classList.add('hidden');
-      chatBox.classList.toggle('hidden');
-    }
-
-    function handleChatEnter(event) {
-      if (event.key === 'Enter') sendChatMessage();
+      document.getElementById('global-chat-box').classList.toggle('hidden');
     }
 
     function sendChatMessage() {
       const input = document.getElementById('chat-input');
       const text = input.value.trim();
-      if (text !== '') {
-        db.ref('global_chat').push({
-          sender: userId,
-          text: text,
-          timestamp: Date.now()
-        });
+      if (text) {
+        db.ref('global_chat').push({ sender: userId, text: text, timestamp: Date.now() });
         input.value = '';
       }
     }
 
-    // --- CHAT PRIBADI (Sandi: 78900987) ---
+    let isPrivateUnlocked = false;
     db.ref('private_chat').limitToLast(50).on('child_added', (snapshot) => {
       const data = snapshot.val();
       appendChatMessage('private-chat-messages', data.sender, data.text);
     });
 
     function togglePrivateChat() {
-      const privateBox = document.getElementById('private-chat-box');
-      document.getElementById('global-chat-box').classList.add('hidden');
-
-      if (privateBox.classList.contains('hidden')) {
+      const box = document.getElementById('private-chat-box');
+      if (box.classList.contains('hidden')) {
         if (!isPrivateUnlocked) {
           const pass = prompt("Masukkan Sandi Chat Pribadi:");
           if (pass === "78900987") {
             isPrivateUnlocked = true;
-            privateBox.classList.remove('hidden');
+            box.classList.remove('hidden');
           } else if (pass !== null) {
             alert("Sandi Salah!");
           }
         } else {
-          privateBox.classList.remove('hidden');
+          box.classList.remove('hidden');
         }
       } else {
-        privateBox.classList.add('hidden');
+        box.classList.add('hidden');
       }
-    }
-
-    function handlePrivateChatEnter(event) {
-      if (event.key === 'Enter') sendPrivateChatMessage();
     }
 
     function sendPrivateChatMessage() {
       const input = document.getElementById('private-chat-input');
       const text = input.value.trim();
-      if (text !== '') {
-        db.ref('private_chat').push({
-          sender: userId,
-          text: text,
-          timestamp: Date.now()
-        });
+      if (text) {
+        db.ref('private_chat').push({ sender: userId, text: text, timestamp: Date.now() });
         input.value = '';
       }
     }
 
     function appendChatMessage(containerId, sender, text) {
-      const chatMessages = document.getElementById(containerId);
-      if (!chatMessages) return;
+      const container = document.getElementById(containerId);
+      if (!container) return;
       const msgDiv = document.createElement('div');
       msgDiv.className = 'user-msg';
       msgDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
-      chatMessages.appendChild(msgDiv);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+      container.appendChild(msgDiv);
+      container.scrollTop = container.scrollHeight;
     }
 
     // --- GEMINI AI INTEGRATION ---
@@ -457,25 +693,18 @@
       const input = document.getElementById('prompt-input');
       const box = document.getElementById('ai-response-box');
       const prompt = input.value.trim();
-
       if (!prompt) return;
 
       box.innerHTML = '<p><em>Sedang memproses respons...</em></p>';
-
       try {
         const res = await fetch('/api/gemini', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: prompt })
         });
-
         const data = await res.json();
-
-        if (res.ok) {
-          box.innerText = data.reply;
-        } else {
-          box.innerText = 'Eror: ' + (data.error || 'Gagal terhubung ke AI.');
-        }
+        if (res.ok) box.innerText = data.reply;
+        else box.innerText = 'Eror: ' + (data.error || 'Gagal terhubung ke AI.');
       } catch (err) {
         box.innerText = 'Eror Jaringan: ' + err.message;
       }
