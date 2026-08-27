@@ -68,7 +68,7 @@ body {
   font-weight: bold;
 }
 
-/* Floating Chat Global di Kanan Layar */
+/* Floating Chat Global */
 #chat-toggle-btn {
   position: fixed;
   right: 20px;
@@ -111,6 +111,21 @@ body {
   background: #0f172a;
   border-radius: 12px 12px 0 0;
   font-weight: bold;
+}
+
+#name-btn {
+  background: #334155;
+  color: #f8fafc;
+  border: 1px solid #475569;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+#name-btn:hover {
+  background: #475569;
 }
 
 .close-btn {
