@@ -38,7 +38,7 @@ app.post('/api/gemini', async (req, res) => {
     // Sistem Rotasi API Key Otomatis
     for (const key of API_KEYS) {
       try {
-       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`;
         const response = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
