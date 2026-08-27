@@ -49,6 +49,24 @@
     </div>
   </div>
 
+  <div id="global-chat-box" class="chat-box hidden">
+  <div class="chat-header">
+    <!-- Tombol ganti nama di sisi kiri header chat -->
+    <button id="name-btn" onclick="changeName()">👤 NAMA</button>
+    <span>🌐 Chat Global</span>
+    <button class="close-btn" onclick="toggleChat()">✖</button>
+  </div>
+  
+  <div id="chat-messages" class="chat-messages">
+    <div class="system-msg">Selamat datang di Obrolan Global!</div>
+  </div>
+  
+  <div class="chat-input-area">
+    <input type="text" id="chat-input" placeholder="Pesan pengguna..." onkeypress="handleChatEnter(event)" />
+    <button onclick="sendChatMessage()">Kirim</button>
+  </div>
+</div>
+  
   <script src="script.js"></script>
 </body>
 </html>
