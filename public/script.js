@@ -7,7 +7,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// Mengambil nama tersimpan dari browser atau membuat ID acak default
+// Mengambil atau membuat ID Rahasia Perangkat (agar pemilik asli tetap bisa memakai namanya)
+let deviceSecretKey = localStorage.getItem('deviceSecretKey');
+if (!deviceSecretKey) {
+  deviceSecretKey = 'dev_' + Math.random().toString(36).substring(2, 11);
+  localStorage.setItem('deviceSecretKey', deviceSecretKey);
+}
+
+// Identitas pengguna
 let userId = localStorage.getItem('chatUsername') || "User_" + Math.floor(1000 + Math.random() * 9000);
 let isPrivateUnlocked = false;
 
@@ -23,17 +30,46 @@ function updateNameButtons() {
   if (privateNameBtn) privateNameBtn.innerText = "👤 " + userId;
 }
 
-// Fungsi untuk mengganti nama dari tombol
-function changeName() {
-  const newName = prompt("Masukkan nama baru kamu:", userId);
-  if (newName && newName.trim() !== "") {
-    userId = newName.trim();
+// --- FUNGSI KUNCI NAMA UNIK ---
+async function changeName() {
+  const inputName = prompt("Masukkan nama baru kamu:", userId);
+  if (!inputName || inputName.trim() === "") return;
+
+  const newName = inputName.trim();
+  const sanitizedKey = newName.toLowerCase().replace(/[.#$/[\]]/g, "_");
+
+  try {
+    // 1. Periksa klaim nama di Firebase
+    const snapshot = await db.ref('claimed_names/' + sanitizedKey).once('value');
+    const existingOwnerKey = snapshot.val();
+
+    // 2. Tolak jika nama sudah diklaim oleh perangkat lain
+    if (existingOwnerKey && existingOwnerKey !== deviceSecretKey) {
+      alert(`⚠️ Nama "${newName}" sudah terkunci dan digunakan pengguna lain! Cari nama lain.`);
+      return;
+    }
+
+    // 3. Kunci nama untuk perangkat ini
+    await db.ref('claimed_names/' + sanitizedKey).set(deviceSecretKey);
+
+    // 4. Lepaskan klaim nama lama jika bukan nama bawaan
+    const oldSanitizedKey = userId.toLowerCase().replace(/[.#$/[\]]/g, "_");
+    if (oldSanitizedKey !== sanitizedKey && !userId.startsWith("User_")) {
+      db.ref('claimed_names/' + oldSanitizedKey).remove();
+    }
+
+    // 5. Simpan nama baru secara lokal
+    userId = newName;
     localStorage.setItem('chatUsername', userId);
     updateNameButtons();
+    alert(`✅ Nama "${userId}" berhasil dikunci untuk perangkat ini!`);
+
+  } catch (err) {
+    alert("Gagal memeriksa ketersediaan nama: " + err.message);
   }
 }
 
-// 1. CHAT GLOBAL REALTIME
+// --- 1. CHAT GLOBAL REALTIME ---
 db.ref('global_chat').limitToLast(50).on('child_added', (snapshot) => {
   const data = snapshot.val();
   appendChatMessage('chat-messages', data.sender, data.text);
@@ -63,7 +99,7 @@ function sendChatMessage() {
   }
 }
 
-// 2. CHAT PRIBADI REALTIME (Password Protected)
+// --- 2. CHAT PRIBADI REALTIME (Proteksi Sandi) ---
 db.ref('private_chat').limitToLast(50).on('child_added', (snapshot) => {
   const data = snapshot.val();
   appendChatMessage('private-chat-messages', data.sender, data.text);
@@ -108,7 +144,7 @@ function sendPrivateChatMessage() {
   }
 }
 
-// Fungsi Bantu Tampilkan Pesan
+// --- FUNGSI TAMPILKAN PESAN ---
 function appendChatMessage(containerId, sender, text) {
   const chatMessages = document.getElementById(containerId);
   if (!chatMessages) return;
@@ -119,7 +155,7 @@ function appendChatMessage(containerId, sender, text) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// LOGIKA UTAMA GEMINI AI
+// --- LOGIKA UTAMA GEMINI AI ---
 async function sendAiPrompt() {
   const input = document.getElementById('prompt-input');
   const box = document.getElementById('ai-response-box');
