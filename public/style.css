@@ -68,7 +68,7 @@ body {
   font-weight: bold;
 }
 
-/* Floating Chat Global */
+/* Tombol Melayang Chat Global & Pribadi */
 #chat-toggle-btn {
   position: fixed;
   right: 20px;
@@ -84,6 +84,22 @@ body {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
+#private-chat-toggle-btn {
+  position: fixed;
+  right: 175px;
+  bottom: 20px;
+  z-index: 1000;
+  background: #e11d48;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+/* Box Chat Styling */
 .chat-box {
   position: fixed;
   right: 20px;
@@ -113,7 +129,11 @@ body {
   font-weight: bold;
 }
 
-#name-btn {
+.private-header {
+  background: #4c0519;
+}
+
+#name-btn, #private-name-btn {
   background: #334155;
   color: #f8fafc;
   border: 1px solid #475569;
@@ -122,10 +142,6 @@ body {
   cursor: pointer;
   font-size: 12px;
   font-weight: bold;
-}
-
-#name-btn:hover {
-  background: #475569;
 }
 
 .close-btn {
@@ -183,4 +199,8 @@ body {
   padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
+}
+
+.chat-input-area .private-send-btn {
+  background: #e11d48;
 }
