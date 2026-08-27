@@ -1,28 +1,20 @@
-// --- KONFIGURASI FIREBASE REALTIME CHAT ---
-// Ganti nilai config di bawah dengan proyek Firebase gratis kamu jika ingin pesan tersimpan publik
+// Ganti URL di bawah dengan URL dari Realtime Database Firebase milikmu
 const firebaseConfig = {
-  databaseURL: "https://dualaiarena-default-rtdb.firebaseio.com" 
+  databaseURL: "https://dual-ai-arena-default-rtdb.asia-southeast1.firebasedatabase.app/" 
 };
 
-// Inisialisasi Firebase (jika URL terpasang)
-let db = null;
-try {
-  if (firebaseConfig.databaseURL && !firebaseConfig.databaseURL.includes("YOUR_PROJECT")) {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.database();
-    
-    // Mendengarkan pesan baru secara realtime
-    db.ref('global_chat').limitToLast(30).on('child_added', (snapshot) => {
-      const data = snapshot.val();
-      appendChatMessage(data.sender, data.text);
-    });
-  }
-} catch (e) {
-  console.log("Firebase belum dihubungkan, obrolan berjalan di mode lokal.");
-}
+// Inisialisasi Database
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-// Generasi ID Pengguna Acak
+// ID Pengguna Acak untuk Identitas Chat
 const userId = "User_" + Math.floor(1000 + Math.random() * 9000);
+
+// Menerima pesan baru secara langsung dari SELURUH pengguna aktif
+db.ref('global_chat').limitToLast(50).on('child_added', (snapshot) => {
+  const data = snapshot.val();
+  appendChatMessage(data.sender, data.text);
+});
 
 // --- LOGIKA CHAT GLOBAL ---
 function toggleChat() {
@@ -39,17 +31,12 @@ function sendChatMessage() {
   const text = input.value.trim();
   
   if (text !== '') {
-    if (db) {
-      // Kirim ke Firebase
-      db.ref('global_chat').push({
-        sender: userId,
-        text: text,
-        timestamp: Date.now()
-      });
-    } else {
-      // Mode Tampilan Lokal
-      appendChatMessage('Kamu', text);
-    }
+    // Memuat pesan ke database cloud agar terkirim ke semua perangkat
+    db.ref('global_chat').push({
+      sender: userId,
+      text: text,
+      timestamp: Date.now()
+    });
     input.value = '';
   }
 }
@@ -63,7 +50,7 @@ function appendChatMessage(sender, text) {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// --- LOGIKA QUERY GEMINI AI ---
+// --- LOGIKA UTAMA GEMINI AI ---
 async function sendAiPrompt() {
   const input = document.getElementById('prompt-input');
   const box = document.getElementById('ai-response-box');
