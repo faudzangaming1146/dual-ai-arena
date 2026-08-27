@@ -301,15 +301,37 @@
       background-color: #0284c7;
     }
 
+    /* Tampilan Pesan Kanan & Kiri */
     .user-msg {
-      background-color: #243047;
+      max-width: 80%;
       padding: 8px 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 13px;
       word-break: break-word;
     }
 
-    .user-msg strong { color: #38bdf8; }
+    /* Pesan Saya (Sebelah Kanan, Tanpa Nama) */
+    .user-msg.msg-me {
+      align-self: flex-end;
+      background-color: #0284c7;
+      color: #ffffff;
+      border-bottom-right-radius: 2px;
+    }
+
+    /* Pesan Orang Lain (Sebelah Kiri, Ada Nama) */
+    .user-msg.msg-them {
+      align-self: flex-start;
+      background-color: #243047;
+      color: #f8fafc;
+      border-bottom-left-radius: 2px;
+    }
+
+    .user-msg.msg-them strong {
+      color: #38bdf8;
+      display: block;
+      font-size: 11px;
+      margin-bottom: 3px;
+    }
 
     .chat-input-area {
       padding: 10px;
@@ -478,7 +500,6 @@
     async function changeName() {
       const isNameChanged = localStorage.getItem('isNameChanged') === 'true';
 
-      // Jika nama sudah pernah diganti 1 kali sebelumnya
       if (isNameChanged) {
         nameClickCount++;
         localStorage.setItem('nameClickCount', nameClickCount);
@@ -497,7 +518,6 @@
         return;
       }
 
-      // Penggantian nama pertama kali (1x Kesempatan)
       const inputName = prompt("Masukkan nama baru kamu (HANYA BISA DIGANTI 1 KALI & PERMANEN):", userId);
       if (!inputName || inputName.trim() === "") return;
 
@@ -522,7 +542,7 @@
 
         userId = newName;
         localStorage.setItem('chatUsername', userId);
-        localStorage.setItem('isNameChanged', 'true'); // Penguncian permanen diaktifkan
+        localStorage.setItem('isNameChanged', 'true');
         updateNameButtons();
         listenToInbox();
         alert(`✅ Nama "${userId}" berhasil disimpan secara PERMANEN untuk akun ini!`);
@@ -700,12 +720,23 @@
       }
     }
 
+    // --- FUNGSI TAMPILAN PESAN KANAN & KIRI ---
     function appendChatMessage(containerId, sender, text) {
       const container = document.getElementById(containerId);
       if (!container) return;
+      
       const msgDiv = document.createElement('div');
-      msgDiv.className = 'user-msg';
-      msgDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      
+      // Jika pengirim adalah diri sendiri
+      if (sender === userId) {
+        msgDiv.className = 'user-msg msg-me';
+        msgDiv.innerText = text; // Nama disembunyikan
+      } else {
+        // Jika pengirim adalah orang lain
+        msgDiv.className = 'user-msg msg-them';
+        msgDiv.innerHTML = `<strong>${sender}</strong>${text}`; // Nama ditampilkan
+      }
+
       container.appendChild(msgDiv);
       container.scrollTop = container.scrollHeight;
     }
