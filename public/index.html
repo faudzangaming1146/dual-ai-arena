@@ -311,7 +311,6 @@
       position: relative;
     }
 
-    /* Pesan Saya (Sebelah Kanan, Tanpa Nama) */
     .user-msg.msg-me {
       align-self: flex-end;
       background-color: #0284c7;
@@ -319,7 +318,6 @@
       border-bottom-right-radius: 2px;
     }
 
-    /* Pesan Orang Lain (Sebelah Kiri, Ada Nama) */
     .user-msg.msg-them {
       align-self: flex-start;
       background-color: #243047;
@@ -372,8 +370,9 @@
     .hidden { display: none !important; }
   </style>
 
-  <!-- Firebase CDN -->
+  <!-- Firebase CDN (Urutan Pustaka Wajib: App -> Auth -> Database) -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
@@ -490,10 +489,18 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const auth = firebase.auth();
 
     const USER_SUFFIX = "@user.dualai.user";
+    let deviceSecretKey = null;
 
-    // Akun khusus yang boleh kirim & hapus pesan di Chat Global
+    // Login Anonim Otomatis
+    auth.signInAnonymously().then((userCredential) => {
+      deviceSecretKey = userCredential.user.uid;
+    }).catch((error) => {
+      console.error("Autentikasi Firebase Gagal:", error);
+    });
+
     const allowedGlobalAdmins = [
       "dualaiarena.vercel.app",
       "@dualaiarena.",
@@ -503,12 +510,6 @@
 
     function isGlobalAdmin(name) {
       return allowedGlobalAdmins.includes(name);
-    }
-
-    let deviceSecretKey = localStorage.getItem('deviceSecretKey');
-    if (!deviceSecretKey) {
-      deviceSecretKey = 'dev_' + Math.random().toString(36).substring(2, 11);
-      localStorage.setItem('deviceSecretKey', deviceSecretKey);
     }
 
     let userId = localStorage.getItem('chatUsername') || ("User_" + Math.floor(1000 + Math.random() * 9000));
@@ -570,7 +571,6 @@
 
       let baseName = inputName.trim();
       
-      // Bersihkan jika pengguna mengetik suffix secara manual
       if (baseName.endsWith(USER_SUFFIX)) {
         baseName = baseName.substring(0, baseName.length - USER_SUFFIX.length);
       }
@@ -608,7 +608,7 @@
       }
     }
 
-    // --- CARI AKUN (OTOMATIS MELENGKAPI SUFFIX) ---
+    // --- CARI AKUN ---
     function openSearchAccountModal() {
       document.getElementById('search-modal').classList.remove('hidden');
       document.getElementById('target-username-input').focus();
@@ -623,7 +623,6 @@
       let targetInput = document.getElementById('target-username-input').value.trim();
       if (!targetInput) return;
 
-      // Otomatis tambahkan suffix jika pengguna hanya mengetikkan nama dasar
       if (!targetInput.endsWith(USER_SUFFIX) && !isGlobalAdmin(targetInput)) {
         targetInput = targetInput + USER_SUFFIX;
       }
@@ -649,7 +648,7 @@
       }
     }
 
-    // --- DIRECT CHAT (PESAN LANGSUNG) ---
+    // --- DIRECT CHAT ---
     function getRoomKey(userA, userB) {
       const sorted = [userA.toLowerCase(), userB.toLowerCase()].sort();
       return sorted[0].replace(/[.#$/[\]]/g, "_") + "_ROOM_" + sorted[1].replace(/[.#$/[\]]/g, "_");
@@ -804,7 +803,7 @@
       }
     }
 
-    // --- FUNGSI TAMPILAN PESAN KANAN & KIRI ---
+    // --- FUNGSI TAMPILAN PESAN ---
     function appendChatMessage(containerId, sender, text, msgKey = '', isGlobal = false) {
       const container = document.getElementById(containerId);
       if (!container) return;
@@ -817,12 +816,10 @@
       const canDelete = isGlobal && isGlobalAdmin(userId);
       const deleteButtonHtml = canDelete ? `<button class="del-btn" onclick="deleteGlobalMessage('${msgKey}')" title="Hapus Pesan"><i class="fa-solid fa-trash"></i></button>` : '';
       
-      // Pesan Milik Sendiri (Rata Kanan, Tanpa Nama)
       if (sender === userId) {
         msgDiv.className = 'user-msg msg-me';
         msgDiv.innerHTML = `${text}${deleteButtonHtml}`;
       } else {
-        // Pesan Orang Lain (Rata Kiri, Tampil Nama)
         msgDiv.className = 'user-msg msg-them';
         msgDiv.innerHTML = `<strong>${sender}</strong>${text}${deleteButtonHtml}`;
       }
