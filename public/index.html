@@ -460,6 +460,7 @@
     }
 
     let userId = localStorage.getItem('chatUsername') || "User_" + Math.floor(1000 + Math.random() * 9000);
+    let nameClickCount = parseInt(localStorage.getItem('nameClickCount') || '0');
     let activeDirectTarget = null;
     let directListenerRef = null;
 
@@ -473,9 +474,31 @@
       if (nameBtn) nameBtn.innerText = userId;
     }
 
-    // --- KUNCI NAMA UNIK ---
+    // --- KUNCI NAMA PERMANEN & PENGHUBUNG ADMIN WA ---
     async function changeName() {
-      const inputName = prompt("Masukkan nama baru kamu:", userId);
+      const isNameChanged = localStorage.getItem('isNameChanged') === 'true';
+
+      // Jika nama sudah pernah diganti 1 kali sebelumnya
+      if (isNameChanged) {
+        nameClickCount++;
+        localStorage.setItem('nameClickCount', nameClickCount);
+
+        if (nameClickCount >= 5) {
+          const wantContactAdmin = confirm("⚠️ Anda sudah mengganti nama 1 kali dan akun ini telah dikunci permanen.\n\nApakah Anda ingin meminta izin kepada Admin untuk mengganti nama?");
+          if (wantContactAdmin) {
+            const adminWA = "6282315227030";
+            const textMsg = encodeURIComponent(`Halo Admin, akun saya "${userId}" ingin meminta izin untuk mengganti nama akun.`);
+            window.open(`https://wa.me/${adminWA}?text=${textMsg}`, '_blank');
+          }
+        } else {
+          const sisaKlik = 5 - nameClickCount;
+          alert(`⚠️ Nama akun kamu sudah permanen dan tidak bisa diganti lagi!\n(Klik ${sisaKlik}x lagi untuk opsi menghubungi Admin via WA)`);
+        }
+        return;
+      }
+
+      // Penggantian nama pertama kali (1x Kesempatan)
+      const inputName = prompt("Masukkan nama baru kamu (HANYA BISA DIGANTI 1 KALI & PERMANEN):", userId);
       if (!inputName || inputName.trim() === "") return;
 
       const newName = inputName.trim();
@@ -499,9 +522,10 @@
 
         userId = newName;
         localStorage.setItem('chatUsername', userId);
+        localStorage.setItem('isNameChanged', 'true'); // Penguncian permanen diaktifkan
         updateNameButtons();
         listenToInbox();
-        alert(`✅ Nama "${userId}" berhasil dikunci untuk perangkat ini!`);
+        alert(`✅ Nama "${userId}" berhasil disimpan secara PERMANEN untuk akun ini!`);
       } catch (err) {
         alert("Gagal memeriksa ketersediaan nama: " + err.message);
       }
@@ -578,14 +602,12 @@
 
       const roomKey = getRoomKey(userId, activeDirectTarget);
       
-      // Kirim ke room percakapan
       db.ref('direct_chats/' + roomKey).push({
         sender: userId,
         text: text,
         timestamp: Date.now()
       });
 
-      // Catat daftar inbox untuk kedua pengguna
       const mySanitized = userId.toLowerCase().replace(/[.#$/[\]]/g, "_");
       const targetSanitized = activeDirectTarget.toLowerCase().replace(/[.#$/[\]]/g, "_");
 
