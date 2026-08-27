@@ -3,72 +3,489 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dual AI Arena & Global Chat</title>
-  <link rel="stylesheet" href="style.css">
-  
-  <!-- SDK Firebase Realtime Database -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <title>Information Chat & AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navbar Header */
+    header {
+      background-color: #1e293b;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #334155;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand i {
+      font-size: 24px;
+      color: #38bdf8;
+    }
+
+    .brand h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      background-color: #334155;
+      color: #f8fafc;
+      border: 1px solid #475569;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      background-color: #475569;
+      border-color: #38bdf8;
+    }
+
+    .btn-primary {
+      background-color: #0284c7;
+      border-color: #38bdf8;
+    }
+
+    .btn-primary:hover {
+      background-color: #0369a1;
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1000px;
+      width: 100%;
+      margin: 20px auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* AI Box Section */
+    .ai-card {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    .ai-card h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .prompt-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .prompt-container input {
+      flex: 1;
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .prompt-container input:focus {
+      border-color: #38bdf8;
+    }
+
+    .ai-response {
+      background-color: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 16px;
+      min-height: 120px;
+      max-height: 350px;
+      overflow-y: auto;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+
+    /* Floating Chat Boxes */
+    .chat-box {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 350px;
+      height: 480px;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      z-index: 100;
+    }
+
+    .chat-box.private {
+      right: 390px;
+      border-color: #a855f7;
+    }
+
+    .chat-header {
+      background-color: #0f172a;
+      padding: 12px 16px;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+
+    .chat-header h3 {
+      font-size: 15px;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chat-header.private-header h3 {
+      color: #c084fc;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .user-msg {
+      background-color: #334155;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .user-msg strong {
+      color: #38bdf8;
+    }
+
+    .chat-input-area {
+      padding: 12px;
+      background-color: #0f172a;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+
+  <!-- Firebase CDN -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
-  <header class="app-header">
-    <h1>⚔️ Dual AI Arena</h1>
+  <!-- Header Section -->
+  <header>
+    <div class="brand">
+      <i class="fa-solid fa-comments"></i>
+      <h1>Information Chat & AI</h1>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn" id="name-btn" onclick="changeName()">👤 Loading...</button>
+      <button class="btn btn-primary" onclick="toggleChat()"><i class="fa-solid fa-globe"></i> Global Chat</button>
+      <button class="btn" style="border-color: #a855f7;" onclick="togglePrivateChat()"><i class="fa-solid fa-lock"></i> Chat Pribadi</button>
+    </div>
   </header>
 
-  <main class="main-container">
-    <section id="game-container">
-      <div id="ai-response-box" class="response-box">
-        <p><em>Respons dari AI akan muncul di sini...</em></p>
+  <!-- Main Content -->
+  <main>
+    <div class="ai-card">
+      <h2><i class="fa-solid fa-robot"></i> Asisten Information Chat & AI</h2>
+      <div class="prompt-container">
+        <input type="text" id="prompt-input" placeholder="Tanyakan sesuatu pada AI..." onkeydown="if(event.key==='Enter') sendAiPrompt()">
+        <button class="btn btn-primary" onclick="sendAiPrompt()"><i class="fa-solid fa-paper-plane"></i> Kirim</button>
       </div>
-      
-      <div class="input-control">
-        <input type="text" id="prompt-input" placeholder="Ketik perintah untuk AI..." />
-        <button onclick="sendAiPrompt()">Kirim ke AI</button>
+      <div class="ai-response" id="ai-response-box">
+        <p style="color: #64748b;"><em>Hasil jawaban AI akan ditampilkan di sini...</em></p>
       </div>
-    </section>
+    </div>
   </main>
 
-  <!-- Tombol Melayang (Kanan Bawah) -->
-  <button id="private-chat-toggle-btn" onclick="togglePrivateChat()">🔒 Chat Pribadi</button>
-  <button id="chat-toggle-btn" onclick="toggleChat()">💬 Chat Global</button>
-
-  <!-- Box Chat Global -->
-  <div id="global-chat-box" class="chat-box hidden">
+  <!-- Global Chat Box -->
+  <div class="chat-box hidden" id="global-chat-box">
     <div class="chat-header">
-      <button id="name-btn" onclick="changeName()">👤 NAMA</button>
-      <span>🌐 Chat Global</span>
-      <button class="close-btn" onclick="toggleChat()">✖</button>
+      <h3><i class="fa-solid fa-globe"></i> Global Chat</h3>
+      <button class="close-btn" onclick="toggleChat()">✕</button>
     </div>
-    
-    <div id="chat-messages" class="chat-messages">
-      <div class="system-msg">Selamat datang di Obrolan Global!</div>
-    </div>
-    
+    <div class="chat-messages" id="chat-messages"></div>
     <div class="chat-input-area">
-      <input type="text" id="chat-input" placeholder="Pesan publik..." onkeypress="handleChatEnter(event)" />
-      <button onclick="sendChatMessage()">Kirim</button>
+      <input type="text" id="chat-input" placeholder="Ketik pesan global..." onkeydown="handleChatEnter(event)">
+      <button class="btn btn-primary" onclick="sendChatMessage()">Kirim</button>
     </div>
   </div>
 
-  <!-- Box Chat Pribadi -->
-  <div id="private-chat-box" class="chat-box hidden">
+  <!-- Private Chat Box -->
+  <div class="chat-box private hidden" id="private-chat-box">
     <div class="chat-header private-header">
-      <button id="private-name-btn" onclick="changeName()">👤 NAMA</button>
-      <span>🔒 Chat Pribadi</span>
-      <button class="close-btn" onclick="togglePrivateChat()">✖</button>
+      <h3><i class="fa-solid fa-user-lock"></i> Chat Pribadi</h3>
+      <button class="close-btn" onclick="togglePrivateChat()">✕</button>
     </div>
-    
-    <div id="private-chat-messages" class="chat-messages">
-      <div class="system-msg">Ruang Rahasia Terhubung (Private Mode).</div>
-    </div>
-    
+    <div class="chat-messages" id="private-chat-messages"></div>
     <div class="chat-input-area">
-      <input type="text" id="private-chat-input" placeholder="Pesan rahasia..." onkeypress="handlePrivateChatEnter(event)" />
-      <button class="private-send-btn" onclick="sendPrivateChatMessage()">Kirim</button>
+      <input type="text" id="private-chat-input" placeholder="Ketik pesan pribadi..." onkeydown="handlePrivateChatEnter(event)">
+      <button class="btn" style="background:#a855f7; border:none;" onclick="sendPrivateChatMessage()">Kirim</button>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    // Config Firebase Realtime Database
+    const firebaseConfig = {
+      databaseURL: "https://dual-ai-arena-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+
+    // Inisialisasi Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // ID Rahasia Perangkat untuk penguncian nama unik
+    let deviceSecretKey = localStorage.getItem('deviceSecretKey');
+    if (!deviceSecretKey) {
+      deviceSecretKey = 'dev_' + Math.random().toString(36).substring(2, 11);
+      localStorage.setItem('deviceSecretKey', deviceSecretKey);
+    }
+
+    // Identitas Pengguna
+    let userId = localStorage.getItem('chatUsername') || "User_" + Math.floor(1000 + Math.random() * 9000);
+    let isPrivateUnlocked = false;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNameButtons();
+    });
+
+    function updateNameButtons() {
+      const nameBtn = document.getElementById('name-btn');
+      if (nameBtn) nameBtn.innerText = "👤 " + userId;
+    }
+
+    // --- KUNCI NAMA UNIK ---
+    async function changeName() {
+      const inputName = prompt("Masukkan nama baru kamu:", userId);
+      if (!inputName || inputName.trim() === "") return;
+
+      const newName = inputName.trim();
+      const sanitizedKey = newName.toLowerCase().replace(/[.#$/[\]]/g, "_");
+
+      try {
+        const snapshot = await db.ref('claimed_names/' + sanitizedKey).once('value');
+        const existingOwnerKey = snapshot.val();
+
+        if (existingOwnerKey && existingOwnerKey !== deviceSecretKey) {
+          alert(`⚠️ Nama "${newName}" sudah terkunci dan digunakan pengguna lain! Cari nama lain.`);
+          return;
+        }
+
+        await db.ref('claimed_names/' + sanitizedKey).set(deviceSecretKey);
+
+        const oldSanitizedKey = userId.toLowerCase().replace(/[.#$/[\]]/g, "_");
+        if (oldSanitizedKey !== sanitizedKey && !userId.startsWith("User_")) {
+          db.ref('claimed_names/' + oldSanitizedKey).remove();
+        }
+
+        userId = newName;
+        localStorage.setItem('chatUsername', userId);
+        updateNameButtons();
+        alert(`✅ Nama "${userId}" berhasil dikunci untuk perangkat ini!`);
+
+      } catch (err) {
+        alert("Gagal memeriksa ketersediaan nama: " + err.message);
+      }
+    }
+
+    // --- CHAT GLOBAL ---
+    db.ref('global_chat').limitToLast(50).on('child_added', (snapshot) => {
+      const data = snapshot.val();
+      appendChatMessage('chat-messages', data.sender, data.text);
+    });
+
+    function toggleChat() {
+      const chatBox = document.getElementById('global-chat-box');
+      document.getElementById('private-chat-box').classList.add('hidden');
+      chatBox.classList.toggle('hidden');
+    }
+
+    function handleChatEnter(event) {
+      if (event.key === 'Enter') sendChatMessage();
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (text !== '') {
+        db.ref('global_chat').push({
+          sender: userId,
+          text: text,
+          timestamp: Date.now()
+        });
+        input.value = '';
+      }
+    }
+
+    // --- CHAT PRIBADI (Sandi: 78900987) ---
+    db.ref('private_chat').limitToLast(50).on('child_added', (snapshot) => {
+      const data = snapshot.val();
+      appendChatMessage('private-chat-messages', data.sender, data.text);
+    });
+
+    function togglePrivateChat() {
+      const privateBox = document.getElementById('private-chat-box');
+      document.getElementById('global-chat-box').classList.add('hidden');
+
+      if (privateBox.classList.contains('hidden')) {
+        if (!isPrivateUnlocked) {
+          const pass = prompt("Masukkan Sandi Chat Pribadi:");
+          if (pass === "78900987") {
+            isPrivateUnlocked = true;
+            privateBox.classList.remove('hidden');
+          } else if (pass !== null) {
+            alert("Sandi Salah!");
+          }
+        } else {
+          privateBox.classList.remove('hidden');
+        }
+      } else {
+        privateBox.classList.add('hidden');
+      }
+    }
+
+    function handlePrivateChatEnter(event) {
+      if (event.key === 'Enter') sendPrivateChatMessage();
+    }
+
+    function sendPrivateChatMessage() {
+      const input = document.getElementById('private-chat-input');
+      const text = input.value.trim();
+      if (text !== '') {
+        db.ref('private_chat').push({
+          sender: userId,
+          text: text,
+          timestamp: Date.now()
+        });
+        input.value = '';
+      }
+    }
+
+    function appendChatMessage(containerId, sender, text) {
+      const chatMessages = document.getElementById(containerId);
+      if (!chatMessages) return;
+      const msgDiv = document.createElement('div');
+      msgDiv.className = 'user-msg';
+      msgDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // --- GEMINI AI INTEGRATION ---
+    async function sendAiPrompt() {
+      const input = document.getElementById('prompt-input');
+      const box = document.getElementById('ai-response-box');
+      const prompt = input.value.trim();
+
+      if (!prompt) return;
+
+      box.innerHTML = '<p><em>Sedang memproses respons...</em></p>';
+
+      try {
+        const res = await fetch('/api/gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: prompt })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          box.innerText = data.reply;
+        } else {
+          box.innerText = 'Eror: ' + (data.error || 'Gagal terhubung ke AI.');
+        }
+      } catch (err) {
+        box.innerText = 'Eror Jaringan: ' + err.message;
+      }
+    }
+  </script>
 </body>
 </html>
+```eof
+
+Perubahan utama yang telah dilakukan:
+* Judul aplikasi pada header dan `<title>` halaman kini diubah menjadi **Information Chat & AI**.
+* Tampilan antarmuka (UI) diperbarui dengan gaya modern, responsif, dan rapi.
+* Seluruh fitur (Chat Global, Chat Pribadi ber-sandi `78900987`, Kunci Nama Unik, dan Gemini AI) disatukan secara rapi dalam satu berkas HTML.
