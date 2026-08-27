@@ -17,7 +17,6 @@
   </header>
 
   <main class="main-container">
-    <!-- Area Utama AI / Render Game -->
     <section id="game-container">
       <div id="ai-response-box" class="response-box">
         <p><em>Respons dari AI akan muncul di sini...</em></p>
@@ -30,11 +29,13 @@
     </section>
   </main>
 
-  <!-- Tombol & Box Chat Global Melayang -->
+  <!-- Tombol Melayang Chat Global -->
   <button id="chat-toggle-btn" onclick="toggleChat()">💬 Chat Global</button>
 
+  <!-- Box Chat Global -->
   <div id="global-chat-box" class="chat-box hidden">
     <div class="chat-header">
+      <button id="name-btn" onclick="changeName()">👤 NAMA</button>
       <span>🌐 Chat Global</span>
       <button class="close-btn" onclick="toggleChat()">✖</button>
     </div>
@@ -49,24 +50,6 @@
     </div>
   </div>
 
-  <div id="global-chat-box" class="chat-box hidden">
-  <div class="chat-header">
-    <!-- Tombol ganti nama di sisi kiri header chat -->
-    <button id="name-btn" onclick="changeName()">👤 NAMA</button>
-    <span>🌐 Chat Global</span>
-    <button class="close-btn" onclick="toggleChat()">✖</button>
-  </div>
-  
-  <div id="chat-messages" class="chat-messages">
-    <div class="system-msg">Selamat datang di Obrolan Global!</div>
-  </div>
-  
-  <div class="chat-input-area">
-    <input type="text" id="chat-input" placeholder="Pesan pengguna..." onkeypress="handleChatEnter(event)" />
-    <button onclick="sendChatMessage()">Kirim</button>
-  </div>
-</div>
-  
   <script src="script.js"></script>
 </body>
 </html>
