@@ -29,7 +29,8 @@
     </section>
   </main>
 
-  <!-- Tombol Melayang Chat Global -->
+  <!-- Tombol Melayang (Kanan Bawah) -->
+  <button id="private-chat-toggle-btn" onclick="togglePrivateChat()">🔒 Chat Pribadi</button>
   <button id="chat-toggle-btn" onclick="toggleChat()">💬 Chat Global</button>
 
   <!-- Box Chat Global -->
@@ -45,8 +46,26 @@
     </div>
     
     <div class="chat-input-area">
-      <input type="text" id="chat-input" placeholder="Pesan pengguna..." onkeypress="handleChatEnter(event)" />
+      <input type="text" id="chat-input" placeholder="Pesan publik..." onkeypress="handleChatEnter(event)" />
       <button onclick="sendChatMessage()">Kirim</button>
+    </div>
+  </div>
+
+  <!-- Box Chat Pribadi -->
+  <div id="private-chat-box" class="chat-box hidden">
+    <div class="chat-header private-header">
+      <button id="private-name-btn" onclick="changeName()">👤 NAMA</button>
+      <span>🔒 Chat Pribadi</span>
+      <button class="close-btn" onclick="togglePrivateChat()">✖</button>
+    </div>
+    
+    <div id="private-chat-messages" class="chat-messages">
+      <div class="system-msg">Ruang Rahasia Terhubung (Private Mode).</div>
+    </div>
+    
+    <div class="chat-input-area">
+      <input type="text" id="private-chat-input" placeholder="Pesan rahasia..." onkeypress="handlePrivateChatEnter(event)" />
+      <button class="private-send-btn" onclick="sendPrivateChatMessage()">Kirim</button>
     </div>
   </div>
 
