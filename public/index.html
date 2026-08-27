@@ -308,6 +308,7 @@
       border-radius: 10px;
       font-size: 13px;
       word-break: break-word;
+      position: relative;
     }
 
     /* Pesan Saya (Sebelah Kanan, Tanpa Nama) */
@@ -331,6 +332,21 @@
       display: block;
       font-size: 11px;
       margin-bottom: 3px;
+    }
+
+    .del-btn {
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: 8px;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+
+    .del-btn:hover {
+      opacity: 1;
     }
 
     .chat-input-area {
@@ -448,7 +464,7 @@
       <button class="close-btn" onclick="toggleChat()">✕</button>
     </div>
     <div class="chat-messages" id="chat-messages"></div>
-    <div class="chat-input-area">
+    <div class="chat-input-area" id="global-input-area">
       <input type="text" id="chat-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendChatMessage()">
       <button class="btn btn-primary" onclick="sendChatMessage()">Kirim</button>
     </div>
@@ -475,6 +491,18 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // Daftar akun khusus yang diizinkan mengirim & menghapus pesan di Chat Global
+    const allowedGlobalAdmins = [
+      "dualaiarena.vercel.app",
+      "@dualaiarena.",
+      "*DUALAIARENA*",
+      "dualaiarena.."
+    ];
+
+    function isGlobalAdmin(name) {
+      return allowedGlobalAdmins.includes(name);
+    }
+
     let deviceSecretKey = localStorage.getItem('deviceSecretKey');
     if (!deviceSecretKey) {
       deviceSecretKey = 'dev_' + Math.random().toString(36).substring(2, 11);
@@ -489,11 +517,27 @@
     document.addEventListener('DOMContentLoaded', () => {
       updateNameButtons();
       listenToInbox();
+      checkGlobalChatPermission();
     });
 
     function updateNameButtons() {
       const nameBtn = document.getElementById('name-btn');
       if (nameBtn) nameBtn.innerText = userId;
+    }
+
+    function checkGlobalChatPermission() {
+      const input = document.getElementById('chat-input');
+      if (!isGlobalAdmin(userId)) {
+        if (input) {
+          input.placeholder = "Hanya akun khusus yang bisa kirim pesan...";
+          input.disabled = true;
+        }
+      } else {
+        if (input) {
+          input.placeholder = "Ketik pesan...";
+          input.disabled = false;
+        }
+      }
     }
 
     // --- KUNCI NAMA PERMANEN & PENGHUBUNG ADMIN WA ---
@@ -545,6 +589,7 @@
         localStorage.setItem('isNameChanged', 'true');
         updateNameButtons();
         listenToInbox();
+        checkGlobalChatPermission();
         alert(`✅ Nama "${userId}" berhasil disimpan secara PERMANEN untuk akun ini!`);
       } catch (err) {
         alert("Gagal memeriksa ketersediaan nama: " + err.message);
@@ -605,7 +650,7 @@
       
       directListenerRef.on('child_added', (snapshot) => {
         const data = snapshot.val();
-        appendChatMessage('direct-messages', data.sender, data.text);
+        appendChatMessage('direct-messages', data.sender, data.text, snapshot.key, false);
       });
     }
 
@@ -667,10 +712,15 @@
       });
     }
 
-    // --- GLOBAL & PRIVATE CHAT ---
+    // --- GLOBAL CHAT & SYSTEM HAPUS PESAN ---
     db.ref('global_chat').limitToLast(50).on('child_added', (snapshot) => {
       const data = snapshot.val();
-      appendChatMessage('chat-messages', data.sender, data.text);
+      appendChatMessage('chat-messages', data.sender, data.text, snapshot.key, true);
+    });
+
+    db.ref('global_chat').on('child_removed', (snapshot) => {
+      const el = document.getElementById('global-msg-' + snapshot.key);
+      if (el) el.remove();
     });
 
     function toggleChat() {
@@ -678,6 +728,11 @@
     }
 
     function sendChatMessage() {
+      if (!isGlobalAdmin(userId)) {
+        alert("⚠️ Hanya akun khusus (dualaiarena.vercel.app, @dualaiarena., *DUALAIARENA*, dualaiarena..) yang dapat mengirim pesan di Chat Global!");
+        return;
+      }
+
       const input = document.getElementById('chat-input');
       const text = input.value.trim();
       if (text) {
@@ -686,10 +741,21 @@
       }
     }
 
+    function deleteGlobalMessage(key) {
+      if (!isGlobalAdmin(userId)) {
+        alert("Akses ditolak. Anda tidak memiliki izin untuk menghapus pesan!");
+        return;
+      }
+      if (confirm("Apakah Anda yakin ingin menghapus pesan ini dari Chat Global?")) {
+        db.ref('global_chat/' + key).remove();
+      }
+    }
+
+    // --- PRIVATE CHAT ---
     let isPrivateUnlocked = false;
     db.ref('private_chat').limitToLast(50).on('child_added', (snapshot) => {
       const data = snapshot.val();
-      appendChatMessage('private-chat-messages', data.sender, data.text);
+      appendChatMessage('private-chat-messages', data.sender, data.text, snapshot.key, false);
     });
 
     function togglePrivateChat() {
@@ -721,20 +787,24 @@
     }
 
     // --- FUNGSI TAMPILAN PESAN KANAN & KIRI ---
-    function appendChatMessage(containerId, sender, text) {
+    function appendChatMessage(containerId, sender, text, msgKey = '', isGlobal = false) {
       const container = document.getElementById(containerId);
       if (!container) return;
       
       const msgDiv = document.createElement('div');
+      if (isGlobal && msgKey) {
+        msgDiv.id = 'global-msg-' + msgKey;
+      }
+
+      const canDelete = isGlobal && isGlobalAdmin(userId);
+      const deleteButtonHtml = canDelete ? `<button class="del-btn" onclick="deleteGlobalMessage('${msgKey}')" title="Hapus Pesan"><i class="fa-solid fa-trash"></i></button>` : '';
       
-      // Jika pengirim adalah diri sendiri
       if (sender === userId) {
         msgDiv.className = 'user-msg msg-me';
-        msgDiv.innerText = text; // Nama disembunyikan
+        msgDiv.innerHTML = `${text}${deleteButtonHtml}`;
       } else {
-        // Jika pengirim adalah orang lain
         msgDiv.className = 'user-msg msg-them';
-        msgDiv.innerHTML = `<strong>${sender}</strong>${text}`; // Nama ditampilkan
+        msgDiv.innerHTML = `<strong>${sender}</strong>${text}${deleteButtonHtml}`;
       }
 
       container.appendChild(msgDiv);
