@@ -491,7 +491,9 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Daftar akun khusus yang diizinkan mengirim & menghapus pesan di Chat Global
+    const USER_SUFFIX = "@user.dualai.user";
+
+    // Akun khusus yang boleh kirim & hapus pesan di Chat Global
     const allowedGlobalAdmins = [
       "dualaiarena.vercel.app",
       "@dualaiarena.",
@@ -509,7 +511,7 @@
       localStorage.setItem('deviceSecretKey', deviceSecretKey);
     }
 
-    let userId = localStorage.getItem('chatUsername') || "User_" + Math.floor(1000 + Math.random() * 9000);
+    let userId = localStorage.getItem('chatUsername') || ("User_" + Math.floor(1000 + Math.random() * 9000));
     let nameClickCount = parseInt(localStorage.getItem('nameClickCount') || '0');
     let activeDirectTarget = null;
     let directListenerRef = null;
@@ -540,7 +542,7 @@
       }
     }
 
-    // --- KUNCI NAMA PERMANEN & PENGHUBUNG ADMIN WA ---
+    // --- GANTI NAMA (OTOMATIS PENAMBAHAN SUFFIX @user.dualai.user) ---
     async function changeName() {
       const isNameChanged = localStorage.getItem('isNameChanged') === 'true';
 
@@ -562,18 +564,26 @@
         return;
       }
 
-      const inputName = prompt("Masukkan nama baru kamu (HANYA BISA DIGANTI 1 KALI & PERMANEN):", userId);
+      const currentBaseName = userId.replace(USER_SUFFIX, "");
+      const inputName = prompt("Masukkan nama baru kamu (HANYA BISA DIGANTI 1 KALI & PERMANEN):", currentBaseName);
       if (!inputName || inputName.trim() === "") return;
 
-      const newName = inputName.trim();
-      const sanitizedKey = newName.toLowerCase().replace(/[.#$/[\]]/g, "_");
+      let baseName = inputName.trim();
+      
+      // Bersihkan jika pengguna mengetik suffix secara manual
+      if (baseName.endsWith(USER_SUFFIX)) {
+        baseName = baseName.substring(0, baseName.length - USER_SUFFIX.length);
+      }
+
+      const fullUsername = baseName + USER_SUFFIX;
+      const sanitizedKey = fullUsername.toLowerCase().replace(/[.#$/[\]]/g, "_");
 
       try {
         const snapshot = await db.ref('claimed_names/' + sanitizedKey).once('value');
         const existingOwnerKey = snapshot.val();
 
         if (existingOwnerKey && existingOwnerKey !== deviceSecretKey) {
-          alert(`⚠️ Nama "${newName}" sudah terkunci dan digunakan pengguna lain! Cari nama lain.`);
+          alert(`⚠️ Nama "${baseName}" sudah digunakan pengguna lain! Cari nama lain.`);
           return;
         }
 
@@ -584,19 +594,21 @@
           db.ref('claimed_names/' + oldSanitizedKey).remove();
         }
 
-        userId = newName;
+        userId = fullUsername;
         localStorage.setItem('chatUsername', userId);
         localStorage.setItem('isNameChanged', 'true');
+        
         updateNameButtons();
         listenToInbox();
         checkGlobalChatPermission();
-        alert(`✅ Nama "${userId}" berhasil disimpan secara PERMANEN untuk akun ini!`);
+        
+        alert(`✅ Nama berhasil disimpan permanen sebagai: ${userId}`);
       } catch (err) {
         alert("Gagal memeriksa ketersediaan nama: " + err.message);
       }
     }
 
-    // --- FITUR SISI KIRI: KIRIM PESAN & CARI AKUN ---
+    // --- CARI AKUN (OTOMATIS MELENGKAPI SUFFIX) ---
     function openSearchAccountModal() {
       document.getElementById('search-modal').classList.remove('hidden');
       document.getElementById('target-username-input').focus();
@@ -608,8 +620,13 @@
     }
 
     async function verifyAndStartChat() {
-      const targetInput = document.getElementById('target-username-input').value.trim();
+      let targetInput = document.getElementById('target-username-input').value.trim();
       if (!targetInput) return;
+
+      // Otomatis tambahkan suffix jika pengguna hanya mengetikkan nama dasar
+      if (!targetInput.endsWith(USER_SUFFIX) && !isGlobalAdmin(targetInput)) {
+        targetInput = targetInput + USER_SUFFIX;
+      }
 
       if (targetInput.toLowerCase() === userId.toLowerCase()) {
         alert("Kamu tidak bisa mengirim pesan ke akun milikmu sendiri!");
@@ -624,7 +641,8 @@
           closeSearchAccountModal();
           startDirectChat(targetInput);
         } else {
-          alert(`⚠️ Akun dengan nama "${targetInput}" tidak ditemukan dalam sistem!`);
+          const baseSearchName = targetInput.replace(USER_SUFFIX, "");
+          alert(`⚠️ Akun dengan nama "${baseSearchName}" tidak ditemukan dalam sistem!`);
         }
       } catch (err) {
         alert("Eror saat mencari akun: " + err.message);
@@ -682,7 +700,7 @@
       input.value = '';
     }
 
-    // --- FITUR SISI KIRI: DAFTAR PESAN (INBOX) ---
+    // --- DAFTAR PESAN (INBOX) ---
     function toggleInbox() {
       document.getElementById('inbox-box').classList.toggle('hidden');
     }
@@ -799,10 +817,12 @@
       const canDelete = isGlobal && isGlobalAdmin(userId);
       const deleteButtonHtml = canDelete ? `<button class="del-btn" onclick="deleteGlobalMessage('${msgKey}')" title="Hapus Pesan"><i class="fa-solid fa-trash"></i></button>` : '';
       
+      // Pesan Milik Sendiri (Rata Kanan, Tanpa Nama)
       if (sender === userId) {
         msgDiv.className = 'user-msg msg-me';
         msgDiv.innerHTML = `${text}${deleteButtonHtml}`;
       } else {
+        // Pesan Orang Lain (Rata Kiri, Tampil Nama)
         msgDiv.className = 'user-msg msg-them';
         msgDiv.innerHTML = `<strong>${sender}</strong>${text}${deleteButtonHtml}`;
       }
