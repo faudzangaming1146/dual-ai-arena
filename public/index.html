@@ -91,6 +91,15 @@
       background-color: #0369a1;
     }
 
+    .btn-danger {
+      background-color: #dc2626;
+      border-color: #f87171;
+    }
+
+    .btn-danger:hover {
+      background-color: #b91c1c;
+    }
+
     /* Page Layout With Sidebar */
     .page-wrapper {
       display: flex;
@@ -99,14 +108,14 @@
 
     /* Left Sidebar */
     .sidebar {
-      width: 100px;
+      width: 110px;
       background-color: #121929;
       border-right: 1px solid #2a374f;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding-top: 25px;
-      gap: 30px;
+      gap: 25px;
     }
 
     .sidebar-btn {
@@ -127,7 +136,7 @@
     }
 
     .sidebar-btn i {
-      font-size: 38px;
+      font-size: 32px;
     }
 
     .sidebar-btn span {
@@ -136,6 +145,10 @@
       color: #ffffff;
       letter-spacing: 0.5px;
       text-align: center;
+    }
+
+    .admin-btn {
+      color: #f43f5e !important;
     }
 
     /* Main Container */
@@ -260,11 +273,17 @@
       border: 1px solid #38bdf8;
       border-radius: 12px;
       padding: 20px;
-      width: 320px;
+      width: 340px;
       display: flex;
       flex-direction: column;
       gap: 15px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    }
+
+    .modal-card.admin-modal-card {
+      width: 520px;
+      max-height: 80vh;
+      border-color: #f43f5e;
     }
 
     .modal-card h3 {
@@ -287,6 +306,50 @@
       gap: 8px;
     }
 
+    .user-manage-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .user-manage-item {
+      background-color: #0d1322;
+      border: 1px solid #2a374f;
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-info .uname {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .user-info .ustatus {
+      font-size: 11px;
+      color: #22c55e;
+    }
+
+    .user-info .ustatus.banned {
+      color: #ef4444;
+    }
+
+    .user-actions {
+      display: flex;
+      gap: 6px;
+    }
+
     /* Floating Windows */
     .chat-box {
       position: fixed;
@@ -304,8 +367,8 @@
     }
 
     .chat-box.private { right: 375px; border-color: #a855f7; }
-    .chat-box.direct { left: 120px; bottom: 20px; right: auto; border-color: #38bdf8; }
-    .chat-box.inbox { left: 120px; bottom: 20px; right: auto; width: 280px; }
+    .chat-box.direct { left: 130px; bottom: 20px; right: auto; border-color: #38bdf8; }
+    .chat-box.inbox { left: 130px; bottom: 20px; right: auto; width: 280px; }
 
     .chat-header {
       background-color: #0d1322;
@@ -460,6 +523,12 @@
         <i class="fa-solid fa-comment-dots"></i>
         <span>KIRIM PESAN</span>
       </button>
+
+      <!-- TOMBOL ADMIN KHUSUS (Hanya tampil jika akun admin) -->
+      <button class="sidebar-btn admin-btn hidden" id="admin-menu-btn" onclick="openAdminPanelModal()">
+        <i class="fa-solid fa-user-shield"></i>
+        <span style="color: #f43f5e;">ADMIN PANEL</span>
+      </button>
     </aside>
 
     <!-- Main Content Area -->
@@ -485,6 +554,19 @@
       <div class="modal-actions">
         <button class="btn" onclick="closeSearchAccountModal()">Batal</button>
         <button class="btn btn-primary" onclick="verifyAndStartChat()">Cari & Chat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Admin Panel (Kelola User & Banned) -->
+  <div class="modal-overlay hidden" id="admin-panel-modal">
+    <div class="modal-card admin-modal-card">
+      <h3 style="color: #f43f5e;"><i class="fa-solid fa-user-gear"></i> Kelola Pengguna (Admin Panel)</h3>
+      <div class="user-manage-list" id="admin-user-list">
+        <p style="color: #64748b; font-size: 12px; text-align: center;">Memuat daftar pengguna...</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeAdminPanelModal()">Tutup</button>
       </div>
     </div>
   </div>
@@ -559,6 +641,7 @@
     // Login Anonim Otomatis
     auth.signInAnonymously().then((userCredential) => {
       deviceSecretKey = userCredential.user.uid;
+      checkBannedStatus();
     }).catch((error) => {
       console.error("Autentikasi Firebase Gagal:", error);
     });
@@ -592,20 +675,32 @@
 
     function checkGlobalChatPermission() {
       const input = document.getElementById('chat-input');
+      const adminBtn = document.getElementById('admin-menu-btn');
+
       if (!isGlobalAdmin(userId)) {
         if (input) {
           input.placeholder = "Hanya akun khusus yang bisa kirim pesan...";
           input.disabled = true;
         }
+        if (adminBtn) adminBtn.classList.add('hidden');
       } else {
         if (input) {
           input.placeholder = "Ketik pesan...";
           input.disabled = false;
         }
+        if (adminBtn) adminBtn.classList.remove('hidden');
       }
     }
 
-    // --- GANTI NAMA (OTOMATIS PENAMBAHAN SUFFIX @user.dualai.user) ---
+    async function checkBannedStatus() {
+      const sanitizedKey = userId.toLowerCase().replace(/[.#$/[\]]/g, "_");
+      const snapshot = await db.ref('banned_users/' + sanitizedKey).once('value');
+      if (snapshot.exists() && snapshot.val() === true) {
+        alert("⚠️ Akun Anda telah DIBANNED oleh Admin. Anda tidak dapat mengirim pesan.");
+      }
+    }
+
+    // --- GANTI NAMA PERMANEN ---
     async function changeName() {
       const isNameChanged = localStorage.getItem('isNameChanged') === 'true';
 
@@ -632,7 +727,6 @@
       if (!inputName || inputName.trim() === "") return;
 
       let baseName = inputName.trim();
-      
       if (baseName.endsWith(USER_SUFFIX)) {
         baseName = baseName.substring(0, baseName.length - USER_SUFFIX.length);
       }
@@ -710,6 +804,113 @@
       }
     }
 
+    // --- FITUR ADMIN PANEL ---
+    function openAdminPanelModal() {
+      if (!isGlobalAdmin(userId)) return;
+      document.getElementById('admin-panel-modal').classList.remove('hidden');
+      loadAllRegisteredUsers();
+    }
+
+    function closeAdminPanelModal() {
+      document.getElementById('admin-panel-modal').classList.add('hidden');
+    }
+
+    async function loadAllRegisteredUsers() {
+      const container = document.getElementById('admin-user-list');
+      container.innerHTML = '<p style="color: #64748b; font-size: 12px; text-align: center;"><i class="fa-solid fa-spinner fa-spin"></i> Memuat daftar pengguna...</p>';
+
+      try {
+        const namesSnap = await db.ref('claimed_names').once('value');
+        const bannedSnap = await db.ref('banned_users').once('value');
+
+        const claimedNames = namesSnap.val() || {};
+        const bannedUsers = bannedSnap.val() || {};
+
+        container.innerHTML = '';
+
+        const keys = Object.keys(claimedNames);
+        if (keys.length === 0) {
+          container.innerHTML = '<p style="color: #64748b; font-size: 12px; text-align: center;">Belum ada akun terdaftar.</p>';
+          return;
+        }
+
+        keys.forEach(sanitizedKey => {
+          const isBanned = !!bannedUsers[sanitizedKey];
+          const item = document.createElement('div');
+          item.className = 'user-manage-item';
+          
+          item.innerHTML = `
+            <div class="user-info">
+              <span class="uname">${sanitizedKey}</span>
+              <span class="ustatus ${isBanned ? 'banned' : ''}">${isBanned ? '🚫 Banned' : '🟢 Aktif'}</span>
+            </div>
+            <div class="user-actions">
+              <button class="btn" onclick="adminEditUsername('${sanitizedKey}')"><i class="fa-solid fa-pen"></i> Ubah</button>
+              <button class="btn ${isBanned ? 'btn-primary' : 'btn-danger'}" onclick="adminToggleBan('${sanitizedKey}', ${isBanned})">
+                ${isBanned ? '<i class="fa-solid fa-unlock"></i> Unban' : '<i class="fa-solid fa-ban"></i> Ban'}
+              </button>
+            </div>
+          `;
+          container.appendChild(item);
+        });
+
+      } catch (err) {
+        container.innerHTML = `<p style="color: #ef4444; font-size: 12px;">Gagal memuat: ${err.message}</p>`;
+      }
+    }
+
+    async function adminEditUsername(oldSanitizedKey) {
+      if (!isGlobalAdmin(userId)) return;
+
+      const newBaseName = prompt(`Ubah nama akun [${oldSanitizedKey}]:`);
+      if (!newBaseName || !newBaseName.trim()) return;
+
+      let formatted = newBaseName.trim();
+      if (!formatted.endsWith(USER_SUFFIX) && !isGlobalAdmin(formatted)) {
+        formatted += USER_SUFFIX;
+      }
+
+      const newSanitizedKey = formatted.toLowerCase().replace(/[.#$/[\]]/g, "_");
+
+      try {
+        const ownerUidSnap = await db.ref('claimed_names/' + oldSanitizedKey).once('value');
+        const ownerUid = ownerUidSnap.val();
+
+        await db.ref('claimed_names/' + newSanitizedKey).set(ownerUid || "ADMIN_MODIFIED");
+        await db.ref('claimed_names/' + oldSanitizedKey).remove();
+
+        // Pindahkan status banned jika ada
+        const bannedSnap = await db.ref('banned_users/' + oldSanitizedKey).once('value');
+        if (bannedSnap.exists()) {
+          await db.ref('banned_users/' + newSanitizedKey).set(bannedSnap.val());
+          await db.ref('banned_users/' + oldSanitizedKey).remove();
+        }
+
+        alert(`✅ Nama akun berhasil diubah menjadi: ${formatted}`);
+        loadAllRegisteredUsers();
+      } catch (err) {
+        alert("Gagal mengubah nama: " + err.message);
+      }
+    }
+
+    async function adminToggleBan(sanitizedKey, isCurrentlyBanned) {
+      if (!isGlobalAdmin(userId)) return;
+
+      const actionText = isCurrentlyBanned ? "Membuka Banned (Unban)" : "Mem-Banned";
+      if (!confirm(`Apakah Anda yakin ingin ${actionText} akun [${sanitizedKey}]?`)) return;
+
+      try {
+        if (isCurrentlyBanned) {
+          await db.ref('banned_users/' + sanitizedKey).remove();
+        } else {
+          await db.ref('banned_users/' + sanitizedKey).set(true);
+        }
+        loadAllRegisteredUsers();
+      } catch (err) {
+        alert("Gagal mengubah status Banned: " + err.message);
+      }
+    }
+
     // --- DIRECT CHAT ---
     function getRoomKey(userA, userB) {
       const sorted = [userA.toLowerCase(), userB.toLowerCase()].sort();
@@ -739,7 +940,14 @@
       activeDirectTarget = null;
     }
 
-    function sendDirectMessage() {
+    async function sendDirectMessage() {
+      const mySanitized = userId.toLowerCase().replace(/[.#$/[\]]/g, "_");
+      const bannedSnap = await db.ref('banned_users/' + mySanitized).once('value');
+      if (bannedSnap.exists() && bannedSnap.val() === true) {
+        alert("⚠️ Akun Anda dilarang (Banned) mengirim pesan!");
+        return;
+      }
+
       const input = document.getElementById('direct-chat-input');
       const text = input.value.trim();
       if (!text || !activeDirectTarget) return;
@@ -752,7 +960,6 @@
         timestamp: Date.now()
       });
 
-      const mySanitized = userId.toLowerCase().replace(/[.#$/[\]]/g, "_");
       const targetSanitized = activeDirectTarget.toLowerCase().replace(/[.#$/[\]]/g, "_");
 
       db.ref(`user_inboxes/${mySanitized}/${targetSanitized}`).set({ targetName: activeDirectTarget });
@@ -890,7 +1097,7 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    // --- GEMINI AI INTEGRATION (DENGAN RENDER MARKDOWN & HIGHLIGHT CODE) ---
+    // --- GEMINI AI INTEGRATION ---
     async function sendAiPrompt() {
       const input = document.getElementById('prompt-input');
       const box = document.getElementById('ai-response-box');
@@ -930,7 +1137,6 @@
 
       box.innerHTML = marked.parse(text);
 
-      // Tambahkan Tombol Copy pada Blok Kodingan AI
       box.querySelectorAll('pre').forEach((pre) => {
         const copyBtn = document.createElement('button');
         copyBtn.className = 'copy-code-btn';
