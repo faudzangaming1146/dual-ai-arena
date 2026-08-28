@@ -4,13 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Information Chat & AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Highlight.js CSS untuk Pewarnaan Kode -->
+  <!-- Highlight.js CSS untuk Pewarnaan Kodingan AI -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
   <style>
     * {
       box-sizing: border-box;
@@ -20,580 +18,908 @@
     }
 
     body {
-      background-color: #0b1120;
+      background-color: #0d1322;
       color: #f8fafc;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
     }
 
-    /* TOP NAVBAR */
-    .navbar {
-      height: 60px;
-      background-color: #0d1424;
+    /* Navbar Header */
+    header {
+      background-color: #172033;
+      padding: 12px 24px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 0 24px;
-      border-bottom: 1px solid #1e293b;
+      align-items: center;
+      border-bottom: 1px solid #2a374f;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 20px;
-      font-weight: 700;
-      color: #ffffff;
+      gap: 10px;
     }
 
     .brand i {
-      color: #0ea5e9;
       font-size: 24px;
+      color: #38bdf8;
     }
 
-    .nav-right {
+    .brand h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .nav-buttons {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .account-label {
       font-size: 13px;
       color: #94a3b8;
-    }
-
-    .user-badge {
-      background-color: #1e293b;
-      color: #e2e8f0;
-      padding: 6px 14px;
-      border-radius: 8px;
       font-weight: 600;
-      border: 1px solid #334155;
     }
 
-    .btn-nav {
-      padding: 8px 18px;
+    .btn {
+      background-color: #243047;
+      color: #f8fafc;
+      border: 1px solid #3b4d6c;
+      padding: 7px 14px;
       border-radius: 8px;
-      border: none;
+      cursor: pointer;
       font-size: 13px;
       font-weight: 600;
-      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
+      gap: 6px;
     }
 
-    .btn-global {
+    .btn:hover {
+      background-color: #2e3d5a;
+    }
+
+    .btn-primary {
       background-color: #0284c7;
-      color: #ffffff;
+      border-color: #38bdf8;
     }
 
-    .btn-global:hover {
+    .btn-primary:hover {
       background-color: #0369a1;
     }
 
-    .btn-pribadi {
-      background-color: #1e293b;
-      color: #e2e8f0;
-      border: 1px solid #334155;
-    }
-
-    .btn-pribadi:hover {
-      background-color: #334155;
-    }
-
-    /* MAIN CONTAINER */
-    .main-wrapper {
+    /* Page Layout With Sidebar */
+    .page-wrapper {
       display: flex;
       flex: 1;
-      height: calc(100vh - 60px);
     }
 
-    /* SIDEBAR */
+    /* Left Sidebar */
     .sidebar {
-      width: 90px;
-      background-color: #070a14;
+      width: 100px;
+      background-color: #121929;
+      border-right: 1px solid #2a374f;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 24px;
-      gap: 28px;
-      border-right: 1px solid #1e293b;
+      padding-top: 25px;
+      gap: 30px;
     }
 
-    .sidebar-item {
+    .sidebar-btn {
+      background: none;
+      border: none;
+      color: #38bdf8;
+      cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 8px;
-      cursor: pointer;
-      color: #94a3b8;
-      transition: color 0.2s ease;
       width: 100%;
+      transition: transform 0.2s;
     }
 
-    .sidebar-item:hover, .sidebar-item.active {
-      color: #0ea5e9;
+    .sidebar-btn:hover {
+      transform: scale(1.05);
     }
 
-    .sidebar-item i {
-      font-size: 26px;
+    .sidebar-btn i {
+      font-size: 38px;
     }
 
-    .sidebar-item span {
+    .sidebar-btn span {
       font-size: 11px;
       font-weight: 700;
+      color: #ffffff;
       letter-spacing: 0.5px;
-      text-transform: uppercase;
       text-align: center;
     }
 
-    /* CONTENT AREA */
-    .content-area {
+    /* Main Container */
+    main {
       flex: 1;
-      padding: 24px;
-      overflow-y: auto;
+      padding: 30px;
       display: flex;
       justify-content: center;
+      align-items: flex-start;
     }
 
-    .chat-card {
-      width: 100%;
-      max-width: 950px;
-      background-color: #0f172a;
-      border: 1px solid #1e293b;
+    .ai-card {
+      background-color: #172033;
+      border: 1px solid #2a374f;
       border-radius: 12px;
-      display: flex;
-      flex-direction: column;
       padding: 24px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 18px;
-      font-weight: 700;
-      color: #38bdf8;
-      margin-bottom: 20px;
-    }
-
-    /* INPUT SECTION */
-    .input-group {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .input-wrapper {
-      flex: 1;
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .chat-input {
       width: 100%;
-      background-color: #070a14;
-      border: 1px solid #1e293b;
-      border-radius: 8px;
-      padding: 14px 45px 14px 16px;
-      color: #f8fafc;
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s ease;
+      max-width: 850px;
     }
 
-    .chat-input:focus {
-      border-color: #0ea5e9;
-    }
-
-    .btn-attach {
-      position: absolute;
-      right: 12px;
-      background: none;
-      border: none;
-      color: #64748b;
-      cursor: pointer;
-      font-size: 18px;
-      transition: color 0.2s ease;
-    }
-
-    .btn-attach:hover {
+    .ai-card h2 {
+      font-size: 16px;
+      margin-bottom: 15px;
       color: #38bdf8;
-    }
-
-    .btn-send {
-      background-color: #0284c7;
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      padding: 0 24px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
-      transition: background-color 0.2s ease;
     }
 
-    .btn-send:hover {
-      background-color: #0369a1;
-    }
-
-    .btn-send:disabled {
-      background-color: #334155;
-      cursor: not-allowed;
-    }
-
-    /* IMAGE PREVIEW BAR */
-    .image-preview-container {
-      display: none;
-      margin-bottom: 12px;
-      position: relative;
-      width: fit-content;
-    }
-
-    .image-preview-container img {
-      max-height: 90px;
-      border-radius: 8px;
-      border: 1px solid #334155;
-    }
-
-    .btn-remove-img {
-      position: absolute;
-      top: -6px;
-      right: -6px;
-      background: #ef4444;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      font-size: 11px;
-      cursor: pointer;
+    .prompt-container {
       display: flex;
-      align-items: center;
-      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
     }
 
-    /* RESPONSE CONTAINER */
-    .response-box {
+    .prompt-container input {
       flex: 1;
-      min-height: 250px;
-      max-height: 500px;
-      overflow-y: auto;
-      background-color: #070a14;
-      border: 1px solid #1e293b;
+      background-color: #0d1322;
+      border: 1px solid #2a374f;
+      color: #fff;
+      padding: 10px 14px;
       border-radius: 8px;
-      padding: 20px;
       font-size: 14px;
-      line-height: 1.6;
-      color: #cbd5e1;
+      outline: none;
     }
 
-    .response-placeholder {
-      color: #64748b;
-      font-style: italic;
-    }
-
-    /* MARKDOWN & CODE STYLING */
-    .response-box h1, .response-box h2, .response-box h3 {
-      color: #f8fafc;
-      margin-top: 16px;
-      margin-bottom: 8px;
-    }
-
-    .response-box p {
-      margin-bottom: 12px;
-    }
-
-    .response-box ul, .response-box ol {
-      margin-left: 20px;
-      margin-bottom: 12px;
-    }
-
-    .response-box pre {
-      position: relative;
-      background-color: #0d1117;
-      border: 1px solid #30363d;
+    /* AI Response & Markdown Styling */
+    .ai-response {
+      background-color: #0d1322;
+      border: 1px solid #2a374f;
       border-radius: 8px;
       padding: 16px;
+      min-height: 140px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      font-size: 14px;
       overflow-x: auto;
-      margin: 14px 0;
     }
 
-    .response-box code {
+    .ai-response h1, .ai-response h2, .ai-response h3 {
+      color: #f8fafc;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+
+    .ai-response p {
+      margin-bottom: 10px;
+    }
+
+    .ai-response ul, .ai-response ol {
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    .ai-response pre {
+      position: relative;
+      background-color: #070a14;
+      border: 1px solid #2a374f;
+      border-radius: 8px;
+      padding: 14px;
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+
+    .ai-response code {
       font-family: 'Consolas', 'Courier New', monospace;
       font-size: 13px;
     }
 
-    /* COPY CODE BUTTON */
     .copy-code-btn {
       position: absolute;
       top: 8px;
       right: 8px;
-      background: #21262d;
-      color: #8b949e;
-      border: 1px solid #30363d;
+      background: #172033;
+      color: #94a3b8;
+      border: 1px solid #3b4d6c;
       border-radius: 6px;
-      padding: 4px 10px;
-      font-size: 12px;
+      padding: 4px 8px;
+      font-size: 11px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
 
     .copy-code-btn:hover {
-      background: #30363d;
-      color: #f0f6fc;
+      background: #2e3d5a;
+      color: #ffffff;
     }
 
-    /* TYPING INDICATOR */
-    .typing-indicator {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #38bdf8;
-      font-weight: 500;
-    }
-
-    .typing-dot {
-      width: 6px;
-      height: 6px;
-      background-color: #38bdf8;
-      border-radius: 50%;
-      animation: bounce 1.4s infinite ease-in-out both;
-    }
-
-    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-
-    @keyframes bounce {
-      0%, 80%, 100% { transform: scale(0); }
-      40% { transform: scale(1.0); }
-    }
-
-    /* MODAL FOR KIRIM PESAN */
+    /* Modal / Popups */
     .modal-overlay {
-      display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(4px);
-      z-index: 1000;
-      align-items: center;
+      display: flex;
       justify-content: center;
+      align-items: center;
+      z-index: 200;
     }
 
     .modal-card {
-      background: #0f172a;
-      border: 1px solid #1e293b;
+      background-color: #172033;
+      border: 1px solid #38bdf8;
       border-radius: 12px;
-      width: 90%;
-      max-width: 500px;
-      padding: 24px;
+      padding: 20px;
+      width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
     }
 
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
+    .modal-card h3 {
+      font-size: 16px;
       color: #38bdf8;
     }
 
-    .modal-close {
+    .modal-card input {
+      background-color: #0d1322;
+      border: 1px solid #2a374f;
+      color: white;
+      padding: 10px;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* Floating Windows */
+    .chat-box {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 340px;
+      height: 450px;
+      background-color: #172033;
+      border: 1px solid #2a374f;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    .chat-box.private { right: 375px; border-color: #a855f7; }
+    .chat-box.direct { left: 120px; bottom: 20px; right: auto; border-color: #38bdf8; }
+    .chat-box.inbox { left: 120px; bottom: 20px; right: auto; width: 280px; }
+
+    .chat-header {
+      background-color: #0d1322;
+      padding: 10px 14px;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #2a374f;
+    }
+
+    .chat-header h3 {
+      font-size: 14px;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .close-btn {
       background: none;
       border: none;
       color: #94a3b8;
-      font-size: 18px;
       cursor: pointer;
     }
+
+    .chat-messages, .inbox-list {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .inbox-item {
+      background-color: #243047;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .inbox-item:hover {
+      background-color: #0284c7;
+    }
+
+    /* Tampilan Pesan Kanan & Kiri */
+    .user-msg {
+      max-width: 80%;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      word-break: break-word;
+      position: relative;
+    }
+
+    .user-msg.msg-me {
+      align-self: flex-end;
+      background-color: #0284c7;
+      color: #ffffff;
+      border-bottom-right-radius: 2px;
+    }
+
+    .user-msg.msg-them {
+      align-self: flex-start;
+      background-color: #243047;
+      color: #f8fafc;
+      border-bottom-left-radius: 2px;
+    }
+
+    .user-msg.msg-them strong {
+      color: #38bdf8;
+      display: block;
+      font-size: 11px;
+      margin-bottom: 3px;
+    }
+
+    .del-btn {
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: 8px;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+
+    .del-btn:hover {
+      opacity: 1;
+    }
+
+    .chat-input-area {
+      padding: 10px;
+      background-color: #0d1322;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      background-color: #172033;
+      border: 1px solid #2a374f;
+      color: #fff;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .hidden { display: none !important; }
   </style>
+
+  <!-- Firebase CDN (Urutan Pustaka Wajib: App -> Auth -> Database) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
-  <!-- TOP NAVBAR -->
-  <div class="navbar">
+  <!-- Top Navigation Header -->
+  <header>
     <div class="brand">
       <i class="fa-solid fa-comments"></i>
-      <span>Information Chat & AI</span>
+      <h1>Information Chat & AI</h1>
     </div>
-    <div class="nav-right">
-      <div class="user-info">
-        <span>NAMA AKUN:</span>
-        <div class="user-badge">@dualaiarena.</div>
-      </div>
-      <button class="btn-nav btn-global" onclick="switchTab('global')">
-        <i class="fa-solid fa-globe"></i> Global Chat
-      </button>
-      <button class="btn-nav btn-pribadi" onclick="switchTab('pribadi')">
-        <i class="fa-solid fa-lock"></i> Chat Pribadi
-      </button>
+    <div class="nav-buttons">
+      <span class="account-label">NAMA AKUN:</span>
+      <button class="btn" id="name-btn" onclick="changeName()">👤 Loading...</button>
+      <button class="btn btn-primary" onclick="toggleChat()"><i class="fa-solid fa-globe"></i> Global Chat</button>
+      <button class="btn" style="border-color: #a855f7;" onclick="togglePrivateChat()"><i class="fa-solid fa-lock"></i> Chat Pribadi</button>
     </div>
-  </div>
+  </header>
 
-  <!-- MAIN CONTAINER -->
-  <div class="main-wrapper">
-    <!-- SIDEBAR -->
-    <div class="sidebar">
-      <div class="sidebar-item active" id="menu-pesan" onclick="switchSidebar('pesan')">
+  <div class="page-wrapper">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <button class="sidebar-btn" onclick="toggleInbox()">
         <i class="fa-solid fa-comments"></i>
         <span>PESAN</span>
-      </div>
-      <div class="sidebar-item" id="menu-kirim" onclick="openKirimPesanModal()">
+      </button>
+
+      <button class="sidebar-btn" onclick="openSearchAccountModal()">
         <i class="fa-solid fa-comment-dots"></i>
         <span>KIRIM PESAN</span>
-      </div>
-    </div>
-
-    <!-- CONTENT AREA -->
-    <div class="content-area">
-      <div class="chat-card" id="chat-section">
-        <div class="card-header">
-          <i class="fa-solid fa-robot"></i>
-          <span>Asisten Information Chat & AI</span>
-        </div>
-
-        <!-- IMAGE PREVIEW -->
-        <div class="image-preview-container" id="img-preview-box">
-          <img id="img-preview" src="" alt="Preview">
-          <button class="btn-remove-img" onclick="removeImage()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-
-        <!-- INPUT GROUP -->
-        <div class="input-group">
-          <div class="input-wrapper">
-            <input type="text" id="user-input" class="chat-input" placeholder="Tanyakan sesuatu pada AI..." onkeydown="handleKeyPress(event)">
-            <input type="file" id="file-input" accept="image/*" style="display:none;" onchange="handleImageSelect(event)">
-            <button class="btn-attach" onclick="document.getElementById('file-input').click()" title="Lampirkan Gambar">
-              <i class="fa-solid fa-image"></i>
-            </button>
-          </div>
-          <button class="btn-send" id="send-btn" onclick="sendToAI()">
-            <i class="fa-solid fa-paper-plane"></i> Kirim
-          </button>
-        </div>
-
-        <!-- RESPONSE BOX -->
-        <div class="response-box" id="response-box">
-          <span class="response-placeholder">Hasil jawaban AI akan ditampilkan di sini...</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL FOR KIRIM PESAN -->
-  <div class="modal-overlay" id="kirim-modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3><i class="fa-solid fa-paper-plane"></i> Kirim Pesan / Pengumuman</h3>
-        <button class="modal-close" onclick="closeKirimPesanModal()"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div style="margin-bottom: 12px;">
-        <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 6px;">Penerima:</label>
-        <input type="text" id="recipient-input" class="chat-input" placeholder="Username / Semua Pengguna (@global)">
-      </div>
-      <div style="margin-bottom: 16px;">
-        <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 6px;">Isi Pesan:</label>
-        <textarea id="direct-msg-input" class="chat-input" rows="4" style="resize: vertical;" placeholder="Tuliskan pesan kamu di sini..."></textarea>
-      </div>
-      <button class="btn-send" style="width: 100%; justify-content: center;" onclick="sendDirectMessage()">
-        <i class="fa-solid fa-paper-plane"></i> Kirim Pesan Sekarang
       </button>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main>
+      <div class="ai-card">
+        <h2><i class="fa-solid fa-robot"></i> Asisten Information Chat & AI</h2>
+        <div class="prompt-container">
+          <input type="text" id="prompt-input" placeholder="Tanyakan sesuatu pada AI..." onkeydown="if(event.key==='Enter') sendAiPrompt()">
+          <button class="btn btn-primary" onclick="sendAiPrompt()"><i class="fa-solid fa-paper-plane"></i> Kirim</button>
+        </div>
+        <div class="ai-response" id="ai-response-box">
+          <p style="color: #64748b;"><em>Hasil jawaban AI akan ditampilkan di sini...</em></p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Cari Akun untuk Kirim Pesan -->
+  <div class="modal-overlay hidden" id="search-modal">
+    <div class="modal-card">
+      <h3><i class="fa-solid fa-user-check"></i> Cari Akun Tujuan</h3>
+      <input type="text" id="target-username-input" placeholder="Masukkan nama akun..." onkeydown="if(event.key==='Enter') verifyAndStartChat()">
+      <div class="modal-actions">
+        <button class="btn" onclick="closeSearchAccountModal()">Batal</button>
+        <button class="btn btn-primary" onclick="verifyAndStartChat()">Cari & Chat</button>
+      </div>
     </div>
   </div>
 
-  <!-- MARKED & HIGHLIGHT JS -->
+  <!-- Box Daftar Pesan / Inbox -->
+  <div class="chat-box inbox hidden" id="inbox-box">
+    <div class="chat-header">
+      <h3><i class="fa-solid fa-inbox"></i> Daftar Pesan</h3>
+      <button class="close-btn" onclick="toggleInbox()">✕</button>
+    </div>
+    <div class="inbox-list" id="inbox-list">
+      <p style="color: #64748b; font-size: 12px; text-align: center;">Belum ada riwayat pesan.</p>
+    </div>
+  </div>
+
+  <!-- Box Chat Langsung / Direct Message -->
+  <div class="chat-box direct hidden" id="direct-chat-box">
+    <div class="chat-header">
+      <h3 id="direct-chat-title"><i class="fa-solid fa-user"></i> Chat</h3>
+      <button class="close-btn" onclick="closeDirectChat()">✕</button>
+    </div>
+    <div class="chat-messages" id="direct-messages"></div>
+    <div class="chat-input-area">
+      <input type="text" id="direct-chat-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendDirectMessage()">
+      <button class="btn btn-primary" onclick="sendDirectMessage()">Kirim</button>
+    </div>
+  </div>
+
+  <!-- Global Chat Box -->
+  <div class="chat-box hidden" id="global-chat-box">
+    <div class="chat-header">
+      <h3><i class="fa-solid fa-globe"></i> Global Chat</h3>
+      <button class="close-btn" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input-area" id="global-input-area">
+      <input type="text" id="chat-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+      <button class="btn btn-primary" onclick="sendChatMessage()">Kirim</button>
+    </div>
+  </div>
+
+  <!-- Private Chat Box -->
+  <div class="chat-box private hidden" id="private-chat-box">
+    <div class="chat-header" style="background: #2e1065;">
+      <h3 style="color: #c084fc;"><i class="fa-solid fa-user-lock"></i> Chat Pribadi</h3>
+      <button class="close-btn" onclick="togglePrivateChat()">✕</button>
+    </div>
+    <div class="chat-messages" id="private-chat-messages"></div>
+    <div class="chat-input-area">
+      <input type="text" id="private-chat-input" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendPrivateChatMessage()">
+      <button class="btn" style="background:#a855f7; border:none;" onclick="sendPrivateChatMessage()">Kirim</button>
+    </div>
+  </div>
+
+  <!-- Marked.js & Highlight.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
   <script>
-    let selectedBase64Image = null;
+    const firebaseConfig = {
+      apiKey: "AIzaSyD6OStWOzG9HfLVP1d0hSROPThIw4SjZ1g",
+      databaseURL: "https://dual-ai-arena-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
 
-    // Handle Image Attachment
-    function handleImageSelect(e) {
-      const file = e.target.files[0];
-      if (!file) return;
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const auth = firebase.auth();
 
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        selectedBase64Image = evt.target.result;
-        document.getElementById('img-preview').src = selectedBase64Image;
-        document.getElementById('img-preview-box').style.display = 'block';
-      };
-      reader.readAsDataURL(file);
+    const USER_SUFFIX = "@user.dualai.user";
+    let deviceSecretKey = null;
+
+    // Login Anonim Otomatis
+    auth.signInAnonymously().then((userCredential) => {
+      deviceSecretKey = userCredential.user.uid;
+    }).catch((error) => {
+      console.error("Autentikasi Firebase Gagal:", error);
+    });
+
+    const allowedGlobalAdmins = [
+      "dualaiarena.vercel.app",
+      "@dualaiarena.",
+      "*DUALAIARENA*",
+      "dualaiarena.."
+    ];
+
+    function isGlobalAdmin(name) {
+      return allowedGlobalAdmins.includes(name);
     }
 
-    function removeImage() {
-      selectedBase64Image = null;
-      document.getElementById('file-input').value = '';
-      document.getElementById('img-preview-box').style.display = 'none';
+    let userId = localStorage.getItem('chatUsername') || ("User_" + Math.floor(1000 + Math.random() * 9000));
+    let nameClickCount = parseInt(localStorage.getItem('nameClickCount') || '0');
+    let activeDirectTarget = null;
+    let directListenerRef = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNameButtons();
+      listenToInbox();
+      checkGlobalChatPermission();
+    });
+
+    function updateNameButtons() {
+      const nameBtn = document.getElementById('name-btn');
+      if (nameBtn) nameBtn.innerText = userId;
     }
 
-    function handleKeyPress(e) {
-      if (e.key === 'Enter') {
-        sendToAI();
+    function checkGlobalChatPermission() {
+      const input = document.getElementById('chat-input');
+      if (!isGlobalAdmin(userId)) {
+        if (input) {
+          input.placeholder = "Hanya akun khusus yang bisa kirim pesan...";
+          input.disabled = true;
+        }
+      } else {
+        if (input) {
+          input.placeholder = "Ketik pesan...";
+          input.disabled = false;
+        }
       }
     }
 
-    // Kirim Pertanyaan ke Backend Express (/api/gemini)
-    async function sendToAI() {
-      const inputEl = document.getElementById('user-input');
-      const responseBox = document.getElementById('response-box');
-      const sendBtn = document.getElementById('send-btn');
-      const message = inputEl.value.trim();
+    // --- GANTI NAMA (OTOMATIS PENAMBAHAN SUFFIX @user.dualai.user) ---
+    async function changeName() {
+      const isNameChanged = localStorage.getItem('isNameChanged') === 'true';
 
-      if (!message && !selectedBase64Image) return;
+      if (isNameChanged) {
+        nameClickCount++;
+        localStorage.setItem('nameClickCount', nameClickCount);
 
-      // Set Loading State
-      sendBtn.disabled = true;
-      responseBox.innerHTML = `
-        <div class="typing-indicator">
-          <span>AI sedang berpikir</span>
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
-        </div>
-      `;
+        if (nameClickCount >= 5) {
+          const wantContactAdmin = confirm("⚠️ Anda sudah mengganti nama 1 kali dan akun ini telah dikunci permanen.\n\nApakah Anda ingin meminta izin kepada Admin untuk mengganti nama?");
+          if (wantContactAdmin) {
+            const adminWA = "6282315227030";
+            const textMsg = encodeURIComponent(`Halo Admin, akun saya "${userId}" ingin meminta izin untuk mengganti nama akun.`);
+            window.open(`https://wa.me/${adminWA}?text=${textMsg}`, '_blank');
+          }
+        } else {
+          const sisaKlik = 5 - nameClickCount;
+          alert(`⚠️ Nama akun kamu sudah permanen dan tidak bisa diganti lagi!\n(Klik ${sisaKlik}x lagi untuk opsi menghubungi Admin via WA)`);
+        }
+        return;
+      }
 
+      const currentBaseName = userId.replace(USER_SUFFIX, "");
+      const inputName = prompt("Masukkan nama baru kamu (HANYA BISA DIGANTI 1 KALI & PERMANEN):", currentBaseName);
+      if (!inputName || inputName.trim() === "") return;
+
+      let baseName = inputName.trim();
+      
+      if (baseName.endsWith(USER_SUFFIX)) {
+        baseName = baseName.substring(0, baseName.length - USER_SUFFIX.length);
+      }
+
+      const fullUsername = baseName + USER_SUFFIX;
+      const sanitizedKey = fullUsername.toLowerCase().replace(/[.#$/[\]]/g, "_");
+
+      try {
+        const snapshot = await db.ref('claimed_names/' + sanitizedKey).once('value');
+        const existingOwnerKey = snapshot.val();
+
+        if (existingOwnerKey && existingOwnerKey !== deviceSecretKey) {
+          alert(`⚠️ Nama "${baseName}" sudah digunakan pengguna lain! Cari nama lain.`);
+          return;
+        }
+
+        await db.ref('claimed_names/' + sanitizedKey).set(deviceSecretKey);
+
+        const oldSanitizedKey = userId.toLowerCase().replace(/[.#$/[\]]/g, "_");
+        if (oldSanitizedKey !== sanitizedKey && !userId.startsWith("User_")) {
+          db.ref('claimed_names/' + oldSanitizedKey).remove();
+        }
+
+        userId = fullUsername;
+        localStorage.setItem('chatUsername', userId);
+        localStorage.setItem('isNameChanged', 'true');
+        
+        updateNameButtons();
+        listenToInbox();
+        checkGlobalChatPermission();
+        
+        alert(`✅ Nama berhasil disimpan permanen sebagai: ${userId}`);
+      } catch (err) {
+        alert("Gagal memeriksa ketersediaan nama: " + err.message);
+      }
+    }
+
+    // --- CARI AKUN ---
+    function openSearchAccountModal() {
+      document.getElementById('search-modal').classList.remove('hidden');
+      document.getElementById('target-username-input').focus();
+    }
+
+    function closeSearchAccountModal() {
+      document.getElementById('search-modal').classList.add('hidden');
+      document.getElementById('target-username-input').value = '';
+    }
+
+    async function verifyAndStartChat() {
+      let targetInput = document.getElementById('target-username-input').value.trim();
+      if (!targetInput) return;
+
+      if (!targetInput.endsWith(USER_SUFFIX) && !isGlobalAdmin(targetInput)) {
+        targetInput = targetInput + USER_SUFFIX;
+      }
+
+      if (targetInput.toLowerCase() === userId.toLowerCase()) {
+        alert("Kamu tidak bisa mengirim pesan ke akun milikmu sendiri!");
+        return;
+      }
+
+      const targetSanitized = targetInput.toLowerCase().replace(/[.#$/[\]]/g, "_");
+
+      try {
+        const snapshot = await db.ref('claimed_names/' + targetSanitized).once('value');
+        if (snapshot.exists()) {
+          closeSearchAccountModal();
+          startDirectChat(targetInput);
+        } else {
+          const baseSearchName = targetInput.replace(USER_SUFFIX, "");
+          alert(`⚠️ Akun dengan nama "${baseSearchName}" tidak ditemukan dalam sistem!`);
+        }
+      } catch (err) {
+        alert("Eror saat mencari akun: " + err.message);
+      }
+    }
+
+    // --- DIRECT CHAT ---
+    function getRoomKey(userA, userB) {
+      const sorted = [userA.toLowerCase(), userB.toLowerCase()].sort();
+      return sorted[0].replace(/[.#$/[\]]/g, "_") + "_ROOM_" + sorted[1].replace(/[.#$/[\]]/g, "_");
+    }
+
+    function startDirectChat(targetUser) {
+      activeDirectTarget = targetUser;
+      document.getElementById('direct-chat-title').innerHTML = `<i class="fa-solid fa-user"></i> ${targetUser}`;
+      document.getElementById('direct-messages').innerHTML = '';
+      document.getElementById('direct-chat-box').classList.remove('hidden');
+
+      if (directListenerRef) directListenerRef.off();
+
+      const roomKey = getRoomKey(userId, targetUser);
+      directListenerRef = db.ref('direct_chats/' + roomKey).limitToLast(50);
+      
+      directListenerRef.on('child_added', (snapshot) => {
+        const data = snapshot.val();
+        appendChatMessage('direct-messages', data.sender, data.text, snapshot.key, false);
+      });
+    }
+
+    function closeDirectChat() {
+      document.getElementById('direct-chat-box').classList.add('hidden');
+      if (directListenerRef) directListenerRef.off();
+      activeDirectTarget = null;
+    }
+
+    function sendDirectMessage() {
+      const input = document.getElementById('direct-chat-input');
+      const text = input.value.trim();
+      if (!text || !activeDirectTarget) return;
+
+      const roomKey = getRoomKey(userId, activeDirectTarget);
+      
+      db.ref('direct_chats/' + roomKey).push({
+        sender: userId,
+        text: text,
+        timestamp: Date.now()
+      });
+
+      const mySanitized = userId.toLowerCase().replace(/[.#$/[\]]/g, "_");
+      const targetSanitized = activeDirectTarget.toLowerCase().replace(/[.#$/[\]]/g, "_");
+
+      db.ref(`user_inboxes/${mySanitized}/${targetSanitized}`).set({ targetName: activeDirectTarget });
+      db.ref(`user_inboxes/${targetSanitized}/${mySanitized}`).set({ targetName: userId });
+
+      input.value = '';
+    }
+
+    // --- DAFTAR PESAN (INBOX) ---
+    function toggleInbox() {
+      document.getElementById('inbox-box').classList.toggle('hidden');
+    }
+
+    function listenToInbox() {
+      const mySanitized = userId.toLowerCase().replace(/[.#$/[\]]/g, "_");
+      db.ref(`user_inboxes/${mySanitized}`).on('value', (snapshot) => {
+        const inboxList = document.getElementById('inbox-list');
+        inboxList.innerHTML = '';
+
+        if (!snapshot.exists()) {
+          inboxList.innerHTML = '<p style="color: #64748b; font-size: 12px; text-align: center;">Belum ada riwayat pesan.</p>';
+          return;
+        }
+
+        snapshot.forEach((child) => {
+          const item = child.val();
+          const div = document.createElement('div');
+          div.className = 'inbox-item';
+          div.innerHTML = `<i class="fa-solid fa-circle-user" style="color:#38bdf8;"></i> <strong>${item.targetName}</strong>`;
+          div.onclick = () => {
+            toggleInbox();
+            startDirectChat(item.targetName);
+          };
+          inboxList.appendChild(div);
+        });
+      });
+    }
+
+    // --- GLOBAL CHAT & SYSTEM HAPUS PESAN ---
+    db.ref('global_chat').limitToLast(50).on('child_added', (snapshot) => {
+      const data = snapshot.val();
+      appendChatMessage('chat-messages', data.sender, data.text, snapshot.key, true);
+    });
+
+    db.ref('global_chat').on('child_removed', (snapshot) => {
+      const el = document.getElementById('global-msg-' + snapshot.key);
+      if (el) el.remove();
+    });
+
+    function toggleChat() {
+      document.getElementById('global-chat-box').classList.toggle('hidden');
+    }
+
+    function sendChatMessage() {
+      if (!isGlobalAdmin(userId)) {
+        alert("⚠️ Hanya akun khusus (dualaiarena.vercel.app, @dualaiarena., *DUALAIARENA*, dualaiarena..) yang dapat mengirim pesan di Chat Global!");
+        return;
+      }
+
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (text) {
+        db.ref('global_chat').push({ sender: userId, text: text, timestamp: Date.now() });
+        input.value = '';
+      }
+    }
+
+    function deleteGlobalMessage(key) {
+      if (!isGlobalAdmin(userId)) {
+        alert("Akses ditolak. Anda tidak memiliki izin untuk menghapus pesan!");
+        return;
+      }
+      if (confirm("Apakah Anda yakin ingin menghapus pesan ini dari Chat Global?")) {
+        db.ref('global_chat/' + key).remove();
+      }
+    }
+
+    // --- PRIVATE CHAT ---
+    let isPrivateUnlocked = false;
+    db.ref('private_chat').limitToLast(50).on('child_added', (snapshot) => {
+      const data = snapshot.val();
+      appendChatMessage('private-chat-messages', data.sender, data.text, snapshot.key, false);
+    });
+
+    function togglePrivateChat() {
+      const box = document.getElementById('private-chat-box');
+      if (box.classList.contains('hidden')) {
+        if (!isPrivateUnlocked) {
+          const pass = prompt("Masukkan Sandi Chat Pribadi:");
+          if (pass === "78900987") {
+            isPrivateUnlocked = true;
+            box.classList.remove('hidden');
+          } else if (pass !== null) {
+            alert("Sandi Salah!");
+          }
+        } else {
+          box.classList.remove('hidden');
+        }
+      } else {
+        box.classList.add('hidden');
+      }
+    }
+
+    function sendPrivateChatMessage() {
+      const input = document.getElementById('private-chat-input');
+      const text = input.value.trim();
+      if (text) {
+        db.ref('private_chat').push({ sender: userId, text: text, timestamp: Date.now() });
+        input.value = '';
+      }
+    }
+
+    // --- FUNGSI TAMPILAN PESAN ---
+    function appendChatMessage(containerId, sender, text, msgKey = '', isGlobal = false) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      
+      const msgDiv = document.createElement('div');
+      if (isGlobal && msgKey) {
+        msgDiv.id = 'global-msg-' + msgKey;
+      }
+
+      const canDelete = isGlobal && isGlobalAdmin(userId);
+      const deleteButtonHtml = canDelete ? `<button class="del-btn" onclick="deleteGlobalMessage('${msgKey}')" title="Hapus Pesan"><i class="fa-solid fa-trash"></i></button>` : '';
+      
+      if (sender === userId) {
+        msgDiv.className = 'user-msg msg-me';
+        msgDiv.innerHTML = `${text}${deleteButtonHtml}`;
+      } else {
+        msgDiv.className = 'user-msg msg-them';
+        msgDiv.innerHTML = `<strong>${sender}</strong>${text}${deleteButtonHtml}`;
+      }
+
+      container.appendChild(msgDiv);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // --- GEMINI AI INTEGRATION (DENGAN RENDER MARKDOWN & HIGHLIGHT CODE) ---
+    async function sendAiPrompt() {
+      const input = document.getElementById('prompt-input');
+      const box = document.getElementById('ai-response-box');
+      const prompt = input.value.trim();
+      if (!prompt) return;
+
+      box.innerHTML = '<p style="color: #38bdf8;"><i class="fa-solid fa-spinner fa-spin"></i> <em>Sedang memproses respons...</em></p>';
+      
       try {
         const res = await fetch('/api/gemini', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: message,
-            image: selectedBase64Image
-          })
+          body: JSON.stringify({ message: prompt })
         });
-
+        
         const data = await res.json();
-
         if (res.ok && data.reply) {
-          renderMarkdownResponse(data.reply);
-          inputEl.value = '';
-          removeImage();
+          renderAiMarkdown(data.reply);
+          input.value = '';
         } else {
-          responseBox.innerHTML = `<span style="color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Error: ${data.error || 'Gagal mendapat respon dari AI.'}</span>`;
+          box.innerHTML = '<span style="color: #ef4444;">Eror: ' + (data.error || 'Gagal terhubung ke AI.') + '</span>';
         }
       } catch (err) {
-        responseBox.innerHTML = `<span style="color: #ef4444;"><i class="fa-solid fa-wifi"></i> Gagal terhubung ke server: ${err.message}</span>`;
-      } finally {
-        sendBtn.disabled = false;
+        box.innerHTML = '<span style="color: #ef4444;">Eror Jaringan: ' + err.message + '</span>';
       }
     }
 
-    // Render Response with Markdown, Highlight.js and Copy Code
-    function renderMarkdownResponse(text) {
-      const responseBox = document.getElementById('response-box');
+    function renderAiMarkdown(text) {
+      const box = document.getElementById('ai-response-box');
 
       marked.setOptions({
         highlight: function(code, lang) {
@@ -602,10 +928,10 @@
         }
       });
 
-      responseBox.innerHTML = marked.parse(text);
+      box.innerHTML = marked.parse(text);
 
-      // Add Copy Button to Code Blocks
-      responseBox.querySelectorAll('pre').forEach((pre) => {
+      // Tambahkan Tombol Copy pada Blok Kodingan AI
+      box.querySelectorAll('pre').forEach((pre) => {
         const copyBtn = document.createElement('button');
         copyBtn.className = 'copy-code-btn';
         copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
@@ -617,41 +943,6 @@
         };
         pre.appendChild(copyBtn);
       });
-    }
-
-    // Navigasi & Modal Actions
-    function switchTab(tab) {
-      alert(`Berpindah ke mode: ${tab === 'global' ? 'Global Chat' : 'Chat Pribadi'}`);
-    }
-
-    function switchSidebar(menu) {
-      document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-      document.getElementById(`menu-${menu}`).classList.add('active');
-    }
-
-    function openKirimPesanModal() {
-      switchSidebar('kirim');
-      document.getElementById('kirim-modal').style.display = 'flex';
-    }
-
-    function closeKirimPesanModal() {
-      switchSidebar('pesan');
-      document.getElementById('kirim-modal').style.display = 'none';
-    }
-
-    function sendDirectMessage() {
-      const recipient = document.getElementById('recipient-input').value;
-      const msg = document.getElementById('direct-msg-input').value;
-
-      if (!msg) {
-        alert('Tuliskan pesan terlebih dahulu!');
-        return;
-      }
-
-      alert(`Pesan berhasil dikirim ke ${recipient || 'semua pengguna'}!`);
-      document.getElementById('recipient-input').value = '';
-      document.getElementById('direct-msg-input').value = '';
-      closeKirimPesanModal();
     }
   </script>
 </body>
