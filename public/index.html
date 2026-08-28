@@ -4,191 +4,655 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Information Chat & AI</title>
+  
+  <!-- Highlight.js CSS untuk Pewarnaan Kode -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
-    * { box-sizing: border-box; font-family: sans-serif; margin: 0; padding: 0; }
-    body { background-color: #0f172a; color: #f8fafc; display: flex; height: 100vh; }
-    
-    /* Sidebar */
-    .sidebar { width: 220px; background-color: #1e293b; padding: 20px; display: flex; flex-direction: column; gap: 20px; border-right: 1px solid #334155; }
-    .sidebar button { background: none; border: none; color: #94a3b8; padding: 10px; text-align: left; cursor: pointer; border-radius: 8px; }
-    .sidebar button.active, .sidebar button:hover { background-color: #334155; color: #fff; }
-    
-    /* Main Area */
-    .main-content { flex: 1; display: flex; flex-direction: column; }
-    .navbar { height: 60px; background-color: #1e293b; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
-    
-    .chat-container { flex: 1; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
-    .chat-messages { flex: 1; background: #1e293b; border-radius: 8px; padding: 15px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #334155; }
-    
-    .chat-input-area { display: flex; gap: 10px; }
-    .chat-input-area input { flex: 1; padding: 12px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: #fff; }
-    .btn { padding: 12px 20px; border: none; border-radius: 6px; background: #3b82f6; color: white; font-weight: bold; cursor: pointer; }
-    .btn:hover { opacity: 0.9; }
-    
-    .btn-admin { background: #f59e0b; width: 100%; margin-top: 10px; display: none; }
-    .admin-badge { background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-right: 5px; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #0b1120;
+      color: #f8fafc;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* TOP NAVBAR */
+    .navbar {
+      height: 60px;
+      background-color: #0d1424;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .brand i {
+      color: #0ea5e9;
+      font-size: 24px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .user-badge {
+      background-color: #1e293b;
+      color: #e2e8f0;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      border: 1px solid #334155;
+    }
+
+    .btn-nav {
+      padding: 8px 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-global {
+      background-color: #0284c7;
+      color: #ffffff;
+    }
+
+    .btn-global:hover {
+      background-color: #0369a1;
+    }
+
+    .btn-pribadi {
+      background-color: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid #334155;
+    }
+
+    .btn-pribadi:hover {
+      background-color: #334155;
+    }
+
+    /* MAIN CONTAINER */
+    .main-wrapper {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 60px);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 90px;
+      background-color: #070a14;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 24px;
+      gap: 28px;
+      border-right: 1px solid #1e293b;
+    }
+
+    .sidebar-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: #94a3b8;
+      transition: color 0.2s ease;
+      width: 100%;
+    }
+
+    .sidebar-item:hover, .sidebar-item.active {
+      color: #0ea5e9;
+    }
+
+    .sidebar-item i {
+      font-size: 26px;
+    }
+
+    .sidebar-item span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* CONTENT AREA */
+    .content-area {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .chat-card {
+      width: 100%;
+      max-width: 950px;
+      background-color: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 20px;
+    }
+
+    /* INPUT SECTION */
+    .input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .chat-input {
+      width: 100%;
+      background-color: #070a14;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 14px 45px 14px 16px;
+      color: #f8fafc;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .chat-input:focus {
+      border-color: #0ea5e9;
+    }
+
+    .btn-attach {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 18px;
+      transition: color 0.2s ease;
+    }
+
+    .btn-attach:hover {
+      color: #38bdf8;
+    }
+
+    .btn-send {
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 0 24px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-send:hover {
+      background-color: #0369a1;
+    }
+
+    .btn-send:disabled {
+      background-color: #334155;
+      cursor: not-allowed;
+    }
+
+    /* IMAGE PREVIEW BAR */
+    .image-preview-container {
+      display: none;
+      margin-bottom: 12px;
+      position: relative;
+      width: fit-content;
+    }
+
+    .image-preview-container img {
+      max-height: 90px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+    }
+
+    .btn-remove-img {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* RESPONSE CONTAINER */
+    .response-box {
+      flex: 1;
+      min-height: 250px;
+      max-height: 500px;
+      overflow-y: auto;
+      background-color: #070a14;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    .response-placeholder {
+      color: #64748b;
+      font-style: italic;
+    }
+
+    /* MARKDOWN & CODE STYLING */
+    .response-box h1, .response-box h2, .response-box h3 {
+      color: #f8fafc;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+
+    .response-box p {
+      margin-bottom: 12px;
+    }
+
+    .response-box ul, .response-box ol {
+      margin-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    .response-box pre {
+      position: relative;
+      background-color: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      margin: 14px 0;
+    }
+
+    .response-box code {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 13px;
+    }
+
+    /* COPY CODE BUTTON */
+    .copy-code-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #21262d;
+      color: #8b949e;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-code-btn:hover {
+      background: #30363d;
+      color: #f0f6fc;
+    }
+
+    /* TYPING INDICATOR */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #38bdf8;
+      font-weight: 500;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background-color: #38bdf8;
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1.0); }
+    }
+
+    /* MODAL FOR KIRIM PESAN */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-card {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      padding: 24px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      color: #38bdf8;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 18px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h3>Information Chat</h3>
-    <button class="active">Pesan</button>
-  </div>
-
-  <!-- Main Content -->
-  <div class="main-content">
-    <div class="navbar">
-      <h2>Information Chat & AI</h2>
-      <div>
-        <span>NAMA AKUN: </span>
-        <button id="user-display-name" class="btn" style="background:#334155;" onclick="changeName()">Loading...</button>
-      </div>
+  <!-- TOP NAVBAR -->
+  <div class="navbar">
+    <div class="brand">
+      <i class="fa-solid fa-comments"></i>
+      <span>Information Chat & AI</span>
     </div>
-
-    <!-- Area Obrolan -->
-    <div class="chat-container">
-      <div class="chat-messages" id="global-chat-messages">
-        <!-- Pesan dimuat otomatis di sini -->
+    <div class="nav-right">
+      <div class="user-info">
+        <span>NAMA AKUN:</span>
+        <div class="user-badge">@dualaiarena.</div>
       </div>
-      
-      <div class="chat-input-area">
-        <input type="text" id="global-chat-input" placeholder="Tanyakan sesuatu atau ketik pesan..." onkeydown="if(event.key==='Enter') sendChatMessage()">
-        <button class="btn" onclick="sendChatMessage()">Kirim</button>
-      </div>
-
-      <!-- Tombol Admin Broadcast (Hanya muncul jika UID sesuai) -->
-      <button id="admin-broadcast-btn" class="btn btn-admin" onclick="openAdminBroadcast()">
-        📢 Kirim Pengumuman Admin
+      <button class="btn-nav btn-global" onclick="switchTab('global')">
+        <i class="fa-solid fa-globe"></i> Global Chat
+      </button>
+      <button class="btn-nav btn-pribadi" onclick="switchTab('pribadi')">
+        <i class="fa-solid fa-lock"></i> Chat Pribadi
       </button>
     </div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <!-- MAIN CONTAINER -->
+  <div class="main-wrapper">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-item active" id="menu-pesan" onclick="switchSidebar('pesan')">
+        <i class="fa-solid fa-comments"></i>
+        <span>PESAN</span>
+      </div>
+      <div class="sidebar-item" id="menu-kirim" onclick="openKirimPesanModal()">
+        <i class="fa-solid fa-comment-dots"></i>
+        <span>KIRIM PESAN</span>
+      </div>
+    </div>
+
+    <!-- CONTENT AREA -->
+    <div class="content-area">
+      <div class="chat-card" id="chat-section">
+        <div class="card-header">
+          <i class="fa-solid fa-robot"></i>
+          <span>Asisten Information Chat & AI</span>
+        </div>
+
+        <!-- IMAGE PREVIEW -->
+        <div class="image-preview-container" id="img-preview-box">
+          <img id="img-preview" src="" alt="Preview">
+          <button class="btn-remove-img" onclick="removeImage()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- INPUT GROUP -->
+        <div class="input-group">
+          <div class="input-wrapper">
+            <input type="text" id="user-input" class="chat-input" placeholder="Tanyakan sesuatu pada AI..." onkeydown="handleKeyPress(event)">
+            <input type="file" id="file-input" accept="image/*" style="display:none;" onchange="handleImageSelect(event)">
+            <button class="btn-attach" onclick="document.getElementById('file-input').click()" title="Lampirkan Gambar">
+              <i class="fa-solid fa-image"></i>
+            </button>
+          </div>
+          <button class="btn-send" id="send-btn" onclick="sendToAI()">
+            <i class="fa-solid fa-paper-plane"></i> Kirim
+          </button>
+        </div>
+
+        <!-- RESPONSE BOX -->
+        <div class="response-box" id="response-box">
+          <span class="response-placeholder">Hasil jawaban AI akan ditampilkan di sini...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FOR KIRIM PESAN -->
+  <div class="modal-overlay" id="kirim-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-paper-plane"></i> Kirim Pesan / Pengumuman</h3>
+        <button class="modal-close" onclick="closeKirimPesanModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 6px;">Penerima:</label>
+        <input type="text" id="recipient-input" class="chat-input" placeholder="Username / Semua Pengguna (@global)">
+      </div>
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 6px;">Isi Pesan:</label>
+        <textarea id="direct-msg-input" class="chat-input" rows="4" style="resize: vertical;" placeholder="Tuliskan pesan kamu di sini..."></textarea>
+      </div>
+      <button class="btn-send" style="width: 100%; justify-content: center;" onclick="sendDirectMessage()">
+        <i class="fa-solid fa-paper-plane"></i> Kirim Pesan Sekarang
+      </button>
+    </div>
+  </div>
+
+  <!-- MARKED & HIGHLIGHT JS -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
   <script>
-    // 1. Konfigurasi Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyD6OStWOzG9HfLVP1d0hSROPThIw4SjZ1g",
-      databaseURL: "https://dual-ai-arena-default-rtdb.asia-southeast1.firebasedatabase.app"
-    };
+    let selectedBase64Image = null;
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const auth = firebase.auth();
+    // Handle Image Attachment
+    function handleImageSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
 
-    // MASUKKAN UID FIREBASE AKUN ADMIN KAMU DI SINI
-    const ADMIN_UID = "GANTI_DENGAN_UID_FIREBASE_AKUN_ADMIN_KAMU"; 
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        selectedBase64Image = evt.target.result;
+        document.getElementById('img-preview').src = selectedBase64Image;
+        document.getElementById('img-preview-box').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
 
-    let currentUsername = "User";
+    function removeImage() {
+      selectedBase64Image = null;
+      document.getElementById('file-input').value = '';
+      document.getElementById('img-preview-box').style.display = 'none';
+    }
 
-    // 2. Autentikasi Anonim & Deteksi Role Admin
-    auth.signInAnonymously().catch(err => console.error("Auth error:", err));
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') {
+        sendToAI();
+      }
+    }
 
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        db.ref("users/" + user.uid).once("value", (snapshot) => {
-          if (snapshot.exists()) {
-            currentUsername = snapshot.val().name;
-          } else {
-            currentUsername = "User_" + user.uid.substr(0, 4);
-            db.ref("users/" + user.uid).set({ name: currentUsername });
-          }
-          document.getElementById("user-display-name").innerText = currentUsername;
+    // Kirim Pertanyaan ke Backend Express (/api/gemini)
+    async function sendToAI() {
+      const inputEl = document.getElementById('user-input');
+      const responseBox = document.getElementById('response-box');
+      const sendBtn = document.getElementById('send-btn');
+      const message = inputEl.value.trim();
+
+      if (!message && !selectedBase64Image) return;
+
+      // Set Loading State
+      sendBtn.disabled = true;
+      responseBox.innerHTML = `
+        <div class="typing-indicator">
+          <span>AI sedang berpikir</span>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      `;
+
+      try {
+        const res = await fetch('/api/gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: message,
+            image: selectedBase64Image
+          })
         });
 
-        // Tampilkan tombol khusus admin jika UID cocok
-        if (user.uid === ADMIN_UID) {
-          document.getElementById("admin-broadcast-btn").style.display = "block";
+        const data = await res.json();
+
+        if (res.ok && data.reply) {
+          renderMarkdownResponse(data.reply);
+          inputEl.value = '';
+          removeImage();
         } else {
-          document.getElementById("admin-broadcast-btn").style.display = "none";
+          responseBox.innerHTML = `<span style="color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> Error: ${data.error || 'Gagal mendapat respon dari AI.'}</span>`;
         }
-      }
-    });
-
-    // 3. Fungsi Ubah Nama User
-    function changeName() {
-      const newName = prompt("Masukkan nama pengguna baru:");
-      if (newName && newName.trim() !== "") {
-        currentUsername = newName.trim();
-        const currentUser = auth.currentUser;
-        if (currentUser) {
-          db.ref("users/" + currentUser.uid).update({ name: currentUsername });
-        }
-        document.getElementById("user-display-name").innerText = currentUsername;
+      } catch (err) {
+        responseBox.innerHTML = `<span style="color: #ef4444;"><i class="fa-solid fa-wifi"></i> Gagal terhubung ke server: ${err.message}</span>`;
+      } finally {
+        sendBtn.disabled = false;
       }
     }
 
-    // 4. Kirim Pesan Biasa
-    function sendChatMessage() {
-      const input = document.getElementById("global-chat-input");
-      const message = input.value.trim();
-      if (!message) return;
+    // Render Response with Markdown, Highlight.js and Copy Code
+    function renderMarkdownResponse(text) {
+      const responseBox = document.getElementById('response-box');
 
-      db.ref("global_chat").push({
-        sender: currentUsername,
-        message: message,
-        timestamp: Date.now(),
-        isAdmin: false
+      marked.setOptions({
+        highlight: function(code, lang) {
+          const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+          return hljs.highlight(code, { language }).value;
+        }
       });
 
-      input.value = "";
-    }
+      responseBox.innerHTML = marked.parse(text);
 
-    // 5. Kirim Pengumuman Admin
-    function openAdminBroadcast() {
-      const categoryChoice = prompt(
-        "Pilih jenis pengumuman:\n1. Update Sistem\n2. Fitur Baru\n3. Tampilan\n4. Keamanan\n\nKetik angka (1-4):"
-      );
-      
-      let categoryName = "";
-      switch(categoryChoice) {
-        case "1": categoryName = "Update Sistem"; break;
-        case "2": categoryName = "Fitur Baru"; break;
-        case "3": categoryName = "Tampilan"; break;
-        case "4": categoryName = "Keamanan"; break;
-        default: alert("Pilihan tidak valid!"); return;
-      }
-
-      const version = prompt(`Masukkan nomor versi ${categoryName} (Contoh: 6.7):`);
-      if (!version) return;
-
-      const messageContent = prompt("Masukkan isi pengumuman:");
-      if (!messageContent) return;
-
-      const finalMessage = `📢 [PENGUMUMAN ADMIN - ${categoryName} ${version}]\n${messageContent}`;
-
-      db.ref("global_chat").push({
-        sender: "ADMIN",
-        message: finalMessage,
-        timestamp: Date.now(),
-        isAdmin: true
-      }).then(() => {
-        alert("Pengumuman berhasil terkirim ke seluruh pengguna!");
+      // Add Copy Button to Code Blocks
+      responseBox.querySelectorAll('pre').forEach((pre) => {
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-code-btn';
+        copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+        copyBtn.onclick = () => {
+          const codeText = pre.querySelector('code')?.innerText || pre.innerText;
+          navigator.clipboard.writeText(codeText);
+          copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+          setTimeout(() => (copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy'), 2000);
+        };
+        pre.appendChild(copyBtn);
       });
     }
 
-    // 6. Mendengarkan Pesan Masuk secara Realtime
-    db.ref("global_chat").on("child_added", (snapshot) => {
-      const data = snapshot.val();
-      const container = document.getElementById("global-chat-messages");
-      
-      const msgDiv = document.createElement("div");
-      msgDiv.style.marginBottom = "10px";
-      
-      if (data.isAdmin) {
-        msgDiv.innerHTML = `<span class="admin-badge">ADMIN</span> <strong>${data.sender}:</strong> <div style="color: #f59e0b; font-weight: bold; white-space: pre-wrap;">${data.message}</div>`;
-      } else {
-        msgDiv.innerHTML = `<strong>${data.sender}:</strong> <span>${data.message}</span>`;
+    // Navigasi & Modal Actions
+    function switchTab(tab) {
+      alert(`Berpindah ke mode: ${tab === 'global' ? 'Global Chat' : 'Chat Pribadi'}`);
+    }
+
+    function switchSidebar(menu) {
+      document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+      document.getElementById(`menu-${menu}`).classList.add('active');
+    }
+
+    function openKirimPesanModal() {
+      switchSidebar('kirim');
+      document.getElementById('kirim-modal').style.display = 'flex';
+    }
+
+    function closeKirimPesanModal() {
+      switchSidebar('pesan');
+      document.getElementById('kirim-modal').style.display = 'none';
+    }
+
+    function sendDirectMessage() {
+      const recipient = document.getElementById('recipient-input').value;
+      const msg = document.getElementById('direct-msg-input').value;
+
+      if (!msg) {
+        alert('Tuliskan pesan terlebih dahulu!');
+        return;
       }
-      
-      container.appendChild(msgDiv);
-      container.scrollTop = container.scrollHeight;
-    });
+
+      alert(`Pesan berhasil dikirim ke ${recipient || 'semua pengguna'}!`);
+      document.getElementById('recipient-input').value = '';
+      document.getElementById('direct-msg-input').value = '';
+      closeKirimPesanModal();
+    }
   </script>
 </body>
 </html>
