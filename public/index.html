@@ -50,7 +50,7 @@
     <!-- Area Obrolan -->
     <div class="chat-container">
       <div class="chat-messages" id="global-chat-messages">
-        <!-- Pesan akan dimuat di sini secara otomatis -->
+        <!-- Pesan dimuat otomatis di sini -->
       </div>
       
       <div class="chat-input-area">
@@ -58,14 +58,14 @@
         <button class="btn" onclick="sendChatMessage()">Kirim</button>
       </div>
 
-      <!-- Tombol Admin Broadcast (Otomatis muncul jika logged in sebagai admin) -->
+      <!-- Tombol Admin Broadcast (Hanya muncul jika UID sesuai) -->
       <button id="admin-broadcast-btn" class="btn btn-admin" onclick="openAdminBroadcast()">
         📢 Kirim Pengumuman Admin
       </button>
     </div>
   </div>
 
-  <!-- SDK Firebase CDN (v8 Compatibility) -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -77,23 +77,20 @@
       databaseURL: "https://dual-ai-arena-default-rtdb.asia-southeast1.firebasedatabase.app"
     };
 
-    // Inisialisasi Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const auth = firebase.auth();
 
-    // Salin UID Firebase milik akun admin kamu di sini
-    const ADMIN_UID = "GVggSaOx8yOE7GTAtQjOvm52Brs2"; 
+    // MASUKKAN UID FIREBASE AKUN ADMIN KAMU DI SINI
+    const ADMIN_UID = "GANTI_DENGAN_UID_FIREBASE_AKUN_ADMIN_KAMU"; 
 
     let currentUsername = "User";
-    let nameClickCount = 0;
 
-    // 2. Autentikasi Anonim Otomatis & Deteksi Admin
+    // 2. Autentikasi Anonim & Deteksi Role Admin
     auth.signInAnonymously().catch(err => console.error("Auth error:", err));
 
     auth.onAuthStateChanged((user) => {
       if (user) {
-        // Cek nama pengguna yang sudah disimpan sebelumnya
         db.ref("users/" + user.uid).once("value", (snapshot) => {
           if (snapshot.exists()) {
             currentUsername = snapshot.val().name;
@@ -104,7 +101,7 @@
           document.getElementById("user-display-name").innerText = currentUsername;
         });
 
-        // Tampilkan tombol admin jika UID cocok
+        // Tampilkan tombol khusus admin jika UID cocok
         if (user.uid === ADMIN_UID) {
           document.getElementById("admin-broadcast-btn").style.display = "block";
         } else {
@@ -113,9 +110,8 @@
       }
     });
 
-    // 3. Fungsi Ubah Nama
+    // 3. Fungsi Ubah Nama User
     function changeName() {
-      nameClickCount++;
       const newName = prompt("Masukkan nama pengguna baru:");
       if (newName && newName.trim() !== "") {
         currentUsername = newName.trim();
@@ -127,7 +123,7 @@
       }
     }
 
-    // 4. Kirim Pesan Global Biasa
+    // 4. Kirim Pesan Biasa
     function sendChatMessage() {
       const input = document.getElementById("global-chat-input");
       const message = input.value.trim();
@@ -143,7 +139,7 @@
       input.value = "";
     }
 
-    // 5. Kirim Broadcast Admin Khusus
+    // 5. Kirim Pengumuman Admin
     function openAdminBroadcast() {
       const categoryChoice = prompt(
         "Pilih jenis pengumuman:\n1. Update Sistem\n2. Fitur Baru\n3. Tampilan\n4. Keamanan\n\nKetik angka (1-4):"
@@ -172,11 +168,11 @@
         timestamp: Date.now(),
         isAdmin: true
       }).then(() => {
-        alert("Pengumuman berhasil dikirim ke seluruh pengguna!");
+        alert("Pengumuman berhasil terkirim ke seluruh pengguna!");
       });
     }
 
-    // 6. Mendengarkan Pesan Masuk Realtime
+    // 6. Mendengarkan Pesan Masuk secara Realtime
     db.ref("global_chat").on("child_added", (snapshot) => {
       const data = snapshot.val();
       const container = document.getElementById("global-chat-messages");
