@@ -6,7 +6,7 @@
   <title>Information Chat & AI</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Highlight.js CSS untuk Pewarnaan Kodingan AI -->
+  <!-- Highlight.js CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   
   <style>
@@ -18,21 +18,51 @@
     }
 
     body {
-      background-color: #0d1322;
+      background-color: #05070d;
       color: #f8fafc;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Video Background Black Hole */
+    #bg-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      z-index: -100;
+      object-fit: cover;
+      filter: brightness(0.5) contrast(1.1);
+    }
+
+    /* Layer Overlay Gradasi Tematik */
+    .bg-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(13, 19, 34, 0.2) 0%, rgba(5, 7, 13, 0.85) 100%);
+      z-index: -99;
+      pointer-events: none;
     }
 
     /* Navbar Header */
     header {
-      background-color: #172033;
+      background-color: rgba(13, 19, 34, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       padding: 12px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #2a374f;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+      z-index: 10;
     }
 
     .brand {
@@ -44,30 +74,32 @@
     .brand i {
       font-size: 24px;
       color: #38bdf8;
+      filter: drop-shadow(0 0 8px #0284c7);
     }
 
     .brand h1 {
       font-size: 18px;
       font-weight: 700;
       color: #ffffff;
+      letter-spacing: 0.5px;
     }
 
     .nav-buttons {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .account-label {
-      font-size: 13px;
+      font-size: 12px;
       color: #94a3b8;
       font-weight: 600;
     }
 
     .btn {
-      background-color: #243047;
+      background-color: rgba(23, 32, 51, 0.75);
       color: #f8fafc;
-      border: 1px solid #3b4d6c;
+      border: 1px solid rgba(56, 189, 248, 0.3);
       padding: 7px 14px;
       border-radius: 8px;
       cursor: pointer;
@@ -76,10 +108,14 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      backdrop-filter: blur(6px);
+      transition: all 0.2s ease;
     }
 
     .btn:hover {
-      background-color: #2e3d5a;
+      background-color: rgba(56, 189, 248, 0.2);
+      border-color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
     }
 
     .btn-primary {
@@ -89,6 +125,7 @@
 
     .btn-primary:hover {
       background-color: #0369a1;
+      box-shadow: 0 0 12px rgba(2, 132, 199, 0.5);
     }
 
     .btn-danger {
@@ -98,6 +135,7 @@
 
     .btn-danger:hover {
       background-color: #b91c1c;
+      box-shadow: 0 0 10px rgba(220, 38, 38, 0.4);
     }
 
     /* Page Layout With Sidebar */
@@ -109,13 +147,16 @@
     /* Left Sidebar */
     .sidebar {
       width: 110px;
-      background-color: #121929;
-      border-right: 1px solid #2a374f;
+      background-color: rgba(13, 19, 34, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-right: 1px solid rgba(56, 189, 248, 0.2);
       display: flex;
       flex-direction: column;
       align-items: center;
       padding-top: 25px;
       gap: 25px;
+      z-index: 5;
     }
 
     .sidebar-btn {
@@ -128,15 +169,16 @@
       align-items: center;
       gap: 8px;
       width: 100%;
-      transition: transform 0.2s;
+      transition: all 0.2s;
     }
 
     .sidebar-btn:hover {
-      transform: scale(1.05);
+      transform: translateY(-2px);
+      filter: drop-shadow(0 0 6px #38bdf8);
     }
 
     .sidebar-btn i {
-      font-size: 32px;
+      font-size: 28px;
     }
 
     .sidebar-btn span {
@@ -151,6 +193,10 @@
       color: #f43f5e !important;
     }
 
+    .admin-btn:hover {
+      filter: drop-shadow(0 0 6px #f43f5e) !important;
+    }
+
     /* Main Container */
     main {
       flex: 1;
@@ -161,12 +207,15 @@
     }
 
     .ai-card {
-      background-color: #172033;
-      border: 1px solid #2a374f;
+      background-color: rgba(13, 19, 34, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: 12px;
       padding: 24px;
       width: 100%;
       max-width: 850px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
     }
 
     .ai-card h2 {
@@ -186,19 +235,24 @@
 
     .prompt-container input {
       flex: 1;
-      background-color: #0d1322;
-      border: 1px solid #2a374f;
+      background-color: rgba(5, 7, 13, 0.7);
+      border: 1px solid rgba(56, 189, 248, 0.3);
       color: #fff;
       padding: 10px 14px;
       border-radius: 8px;
       font-size: 14px;
       outline: none;
+      transition: border 0.2s;
+    }
+
+    .prompt-container input:focus {
+      border-color: #38bdf8;
     }
 
     /* AI Response & Markdown Styling */
     .ai-response {
-      background-color: #0d1322;
-      border: 1px solid #2a374f;
+      background-color: rgba(5, 7, 13, 0.75);
+      border: 1px solid rgba(56, 189, 248, 0.2);
       border-radius: 8px;
       padding: 16px;
       min-height: 140px;
@@ -225,8 +279,8 @@
 
     .ai-response pre {
       position: relative;
-      background-color: #070a14;
-      border: 1px solid #2a374f;
+      background-color: #030408;
+      border: 1px solid rgba(56, 189, 248, 0.3);
       border-radius: 8px;
       padding: 14px;
       overflow-x: auto;
@@ -261,15 +315,16 @@
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.8);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 200;
+      backdrop-filter: blur(6px);
     }
 
     .modal-card {
-      background-color: #172033;
+      background-color: rgba(13, 19, 34, 0.95);
       border: 1px solid #38bdf8;
       border-radius: 12px;
       padding: 20px;
@@ -277,7 +332,7 @@
       display: flex;
       flex-direction: column;
       gap: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     }
 
     .modal-card.admin-modal-card {
@@ -292,8 +347,8 @@
     }
 
     .modal-card input {
-      background-color: #0d1322;
-      border: 1px solid #2a374f;
+      background-color: #05070d;
+      border: 1px solid rgba(56, 189, 248, 0.3);
       color: white;
       padding: 10px;
       border-radius: 6px;
@@ -316,8 +371,8 @@
     }
 
     .user-manage-item {
-      background-color: #0d1322;
-      border: 1px solid #2a374f;
+      background-color: #05070d;
+      border: 1px solid rgba(56, 189, 248, 0.2);
       border-radius: 8px;
       padding: 10px 14px;
       display: flex;
@@ -350,20 +405,22 @@
       gap: 6px;
     }
 
-    /* Floating Windows */
+    /* Floating Windows Chat */
     .chat-box {
       position: fixed;
       bottom: 20px;
       right: 20px;
       width: 340px;
       height: 450px;
-      background-color: #172033;
-      border: 1px solid #2a374f;
+      background-color: rgba(13, 19, 34, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(56, 189, 248, 0.3);
       border-radius: 12px;
       display: flex;
       flex-direction: column;
       z-index: 100;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
     }
 
     .chat-box.private { right: 375px; border-color: #a855f7; }
@@ -371,14 +428,14 @@
     .chat-box.inbox { left: 130px; bottom: 20px; right: auto; width: 280px; }
 
     .chat-header {
-      background-color: #0d1322;
+      background-color: rgba(5, 7, 13, 0.8);
       padding: 10px 14px;
       border-top-left-radius: 12px;
       border-top-right-radius: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #2a374f;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.2);
     }
 
     .chat-header h3 {
@@ -394,6 +451,7 @@
       border: none;
       color: #94a3b8;
       cursor: pointer;
+      font-size: 14px;
     }
 
     .chat-messages, .inbox-list {
@@ -406,7 +464,7 @@
     }
 
     .inbox-item {
-      background-color: #243047;
+      background-color: rgba(23, 32, 51, 0.8);
       padding: 10px 12px;
       border-radius: 8px;
       cursor: pointer;
@@ -421,7 +479,6 @@
       background-color: #0284c7;
     }
 
-    /* Tampilan Pesan Kanan & Kiri */
     .user-msg {
       max-width: 80%;
       padding: 8px 12px;
@@ -440,9 +497,10 @@
 
     .user-msg.msg-them {
       align-self: flex-start;
-      background-color: #243047;
+      background-color: rgba(23, 32, 51, 0.85);
       color: #f8fafc;
       border-bottom-left-radius: 2px;
+      border: 1px solid rgba(56, 189, 248, 0.15);
     }
 
     .user-msg.msg-them strong {
@@ -469,7 +527,7 @@
 
     .chat-input-area {
       padding: 10px;
-      background-color: #0d1322;
+      background-color: rgba(5, 7, 13, 0.8);
       border-bottom-left-radius: 12px;
       border-bottom-right-radius: 12px;
       display: flex;
@@ -478,8 +536,8 @@
 
     .chat-input-area input {
       flex: 1;
-      background-color: #172033;
-      border: 1px solid #2a374f;
+      background-color: #0d1322;
+      border: 1px solid rgba(56, 189, 248, 0.3);
       color: #fff;
       padding: 8px;
       border-radius: 6px;
@@ -488,14 +546,118 @@
     }
 
     .hidden { display: none !important; }
+
+    /* Desain Responsif Mobile */
+    @media (max-width: 768px) {
+      header {
+        padding: 8px 12px;
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+      }
+
+      .brand {
+        justify-content: center;
+      }
+
+      .brand h1 {
+        font-size: 15px;
+      }
+
+      .nav-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .account-label {
+        font-size: 10px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .btn {
+        padding: 5px 9px;
+        font-size: 11px;
+        border-radius: 6px;
+      }
+
+      .page-wrapper {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 8px 4px;
+        border-right: none;
+        border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+        gap: 0;
+      }
+
+      .sidebar-btn {
+        gap: 3px;
+      }
+
+      .sidebar-btn i {
+        font-size: 20px;
+      }
+
+      .sidebar-btn span {
+        font-size: 9px;
+      }
+
+      main {
+        padding: 12px 8px;
+      }
+
+      .ai-card {
+        padding: 14px;
+      }
+
+      .prompt-container {
+        flex-direction: column;
+      }
+
+      .prompt-container input {
+        font-size: 12px;
+      }
+
+      .chat-box, 
+      .chat-box.private, 
+      .chat-box.direct, 
+      .chat-box.inbox {
+        left: 8px !important;
+        right: 8px !important;
+        bottom: 8px !important;
+        width: auto !important;
+        height: 70vh !important;
+      }
+
+      .modal-card, 
+      .modal-card.admin-modal-card {
+        width: 92% !important;
+        padding: 14px;
+      }
+    }
   </style>
 
-  <!-- Firebase CDN (Urutan Pustaka Wajib: App -> Auth -> Database) -->
+  <!-- Firebase CDN -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
+
+  <!-- Background Video Lubang Hitam (Path folder public di GitHub) -->
+  <video autoplay muted loop playsinline id="bg-video">
+    <source src="public/video.mp4" type="video/mp4">
+  </video>
+
+  <!-- Layer Overlay Dark Sci-Fi -->
+  <div class="bg-overlay"></div>
 
   <!-- Top Navigation Header -->
   <header>
@@ -512,7 +674,7 @@
   </header>
 
   <div class="page-wrapper">
-    <!-- Left Sidebar -->
+    <!-- Left Sidebar / Top Nav Mobile -->
     <aside class="sidebar">
       <button class="sidebar-btn" onclick="toggleInbox()">
         <i class="fa-solid fa-comments"></i>
@@ -524,7 +686,7 @@
         <span>KIRIM PESAN</span>
       </button>
 
-      <!-- TOMBOL ADMIN KHUSUS (Hanya tampil jika akun admin) -->
+      <!-- TOMBOL ADMIN PANEL -->
       <button class="sidebar-btn admin-btn hidden" id="admin-menu-btn" onclick="openAdminPanelModal()">
         <i class="fa-solid fa-user-shield"></i>
         <span style="color: #f43f5e;">ADMIN PANEL</span>
@@ -546,7 +708,7 @@
     </main>
   </div>
 
-  <!-- Modal Cari Akun untuk Kirim Pesan -->
+  <!-- Modal Cari Akun -->
   <div class="modal-overlay hidden" id="search-modal">
     <div class="modal-card">
       <h3><i class="fa-solid fa-user-check"></i> Cari Akun Tujuan</h3>
@@ -558,7 +720,7 @@
     </div>
   </div>
 
-  <!-- Modal Admin Panel (Kelola User & Banned) -->
+  <!-- Modal Admin Panel -->
   <div class="modal-overlay hidden" id="admin-panel-modal">
     <div class="modal-card admin-modal-card">
       <h3 style="color: #f43f5e;"><i class="fa-solid fa-user-gear"></i> Kelola Pengguna (Admin Panel)</h3>
@@ -571,7 +733,7 @@
     </div>
   </div>
 
-  <!-- Box Daftar Pesan / Inbox -->
+  <!-- Box Inbox -->
   <div class="chat-box inbox hidden" id="inbox-box">
     <div class="chat-header">
       <h3><i class="fa-solid fa-inbox"></i> Daftar Pesan</h3>
@@ -582,7 +744,7 @@
     </div>
   </div>
 
-  <!-- Box Chat Langsung / Direct Message -->
+  <!-- Box Direct Message -->
   <div class="chat-box direct hidden" id="direct-chat-box">
     <div class="chat-header">
       <h3 id="direct-chat-title"><i class="fa-solid fa-user"></i> Chat</h3>
@@ -621,7 +783,7 @@
     </div>
   </div>
 
-  <!-- Marked.js & Highlight.js CDN -->
+  <!-- Markdown & Highlight CDN -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
@@ -638,7 +800,6 @@
     const USER_SUFFIX = "@user.dualai.user";
     let deviceSecretKey = null;
 
-    // Login Anonim Otomatis
     auth.signInAnonymously().then((userCredential) => {
       deviceSecretKey = userCredential.user.uid;
       checkBannedStatus();
@@ -700,7 +861,6 @@
       }
     }
 
-    // --- GANTI NAMA PERMANEN ---
     async function changeName() {
       const isNameChanged = localStorage.getItem('isNameChanged') === 'true';
 
@@ -764,7 +924,6 @@
       }
     }
 
-    // --- CARI AKUN ---
     function openSearchAccountModal() {
       document.getElementById('search-modal').classList.remove('hidden');
       document.getElementById('target-username-input').focus();
@@ -804,7 +963,6 @@
       }
     }
 
-    // --- FITUR ADMIN PANEL ---
     function openAdminPanelModal() {
       if (!isGlobalAdmin(userId)) return;
       document.getElementById('admin-panel-modal').classList.remove('hidden');
@@ -879,7 +1037,6 @@
         await db.ref('claimed_names/' + newSanitizedKey).set(ownerUid || "ADMIN_MODIFIED");
         await db.ref('claimed_names/' + oldSanitizedKey).remove();
 
-        // Pindahkan status banned jika ada
         const bannedSnap = await db.ref('banned_users/' + oldSanitizedKey).once('value');
         if (bannedSnap.exists()) {
           await db.ref('banned_users/' + newSanitizedKey).set(bannedSnap.val());
@@ -911,7 +1068,6 @@
       }
     }
 
-    // --- DIRECT CHAT ---
     function getRoomKey(userA, userB) {
       const sorted = [userA.toLowerCase(), userB.toLowerCase()].sort();
       return sorted[0].replace(/[.#$/[\]]/g, "_") + "_ROOM_" + sorted[1].replace(/[.#$/[\]]/g, "_");
@@ -968,7 +1124,6 @@
       input.value = '';
     }
 
-    // --- DAFTAR PESAN (INBOX) ---
     function toggleInbox() {
       document.getElementById('inbox-box').classList.toggle('hidden');
     }
@@ -998,7 +1153,6 @@
       });
     }
 
-    // --- GLOBAL CHAT & SYSTEM HAPUS PESAN ---
     db.ref('global_chat').limitToLast(50).on('child_added', (snapshot) => {
       const data = snapshot.val();
       appendChatMessage('chat-messages', data.sender, data.text, snapshot.key, true);
@@ -1037,7 +1191,6 @@
       }
     }
 
-    // --- PRIVATE CHAT ---
     let isPrivateUnlocked = false;
     db.ref('private_chat').limitToLast(50).on('child_added', (snapshot) => {
       const data = snapshot.val();
@@ -1072,7 +1225,6 @@
       }
     }
 
-    // --- FUNGSI TAMPILAN PESAN ---
     function appendChatMessage(containerId, sender, text, msgKey = '', isGlobal = false) {
       const container = document.getElementById(containerId);
       if (!container) return;
@@ -1097,7 +1249,6 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    // --- GEMINI AI INTEGRATION ---
     async function sendAiPrompt() {
       const input = document.getElementById('prompt-input');
       const box = document.getElementById('ai-response-box');
